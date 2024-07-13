@@ -1,51 +1,18 @@
-import React from 'react';
+'use client';
+import React, { useEffect } from 'react';
 
-export default function ChatBody() {
+import { messages } from '../ChatBodyUtility';
+
+export default function ChatBody({ messages }) {
+  useEffect(() => {}, [messages]);
   return (
-    // Format Prime/Icon Username : Message
-
-    <div className="bg-gray-200 p-3 rounded-lg shadow-md ">
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold ">Username</span>: Very Nice Content! I hope
-        you have a terrific weekend. and hopefully we shall meet again
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold text-md">Username</span>: Very Nice Content!
-        I hope you have a terrific weekend. and hopefully we shall meet again
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold ">Username</span>: Very Nice Content! I hope
-        you have a terrific weekend. and hopefully we shall meet again
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold ">Username</span>: Very Nice Content! I hope
-        you have a terrific weekend. and hopefully we shall meet again
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold ">Username</span>: Very Nice Content! I hope
-        you have a terrific weekend. and hopefully we shall meet again
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
-      <p className="text-sm font-medium text-gray-600 p-2 ">
-        <span className="font-bold">Username</span>: Very Nice Content!
-      </p>
+    <div className="bg-gray-200 p-3 rounded-lg shadow-md">
+      {messages.map((element, index) => (
+        <p className="text-sm font-medium text-gray-600 p-2" key={index}>
+          <span className="font-bold">{element.username}</span>:{' '}
+          {element.message}
+        </p>
+      ))}
     </div>
   );
 }

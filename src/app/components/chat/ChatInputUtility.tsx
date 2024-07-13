@@ -8,11 +8,13 @@ class TrieNode {
   children: { [key: string]: TrieNode };
   finalWord: string;
   isEndOfWord: boolean;
+  description: string;
 
   constructor() {
     this.children = {}; // storing the children of each node
     this.finalWord = ''; // store the main value
     this.isEndOfWord = false; // indicator if we have reached the end of word
+    this.description = ''; // this will be description tag
   }
 }
 
@@ -24,7 +26,7 @@ export class Trie {
   }
 
   // inserting all words inside the trie
-  insert(word: string): void {
+  insert(word: string, description: string): void {
     let currentNode = this.root;
 
     for (let letter of word) {
@@ -35,10 +37,11 @@ export class Trie {
     }
     currentNode.isEndOfWord = true;
     currentNode.finalWord = word;
+    currentNode.description = description;
   }
   // Search and display any potentential matches
-  search(word: string): string[] {
-    let result: string[] = [];
+  search(word: string) {
+    let result: any = [];
 
     let currentNode = this.root;
 
@@ -51,10 +54,10 @@ export class Trie {
       }
     }
 
-    // Traverse through any of the potential matches EX/ "Angel" => ["Angels", "Angels2"...]
+    // Traverse through any of the potential matches EX/ "Angel" => [["Angels", description], "Angels2"...] with its description
     const dfs = (node: TrieNode) => {
       if (node.isEndOfWord) {
-        result.push(node.finalWord);
+        result.push([node.finalWord, node.description]);
       }
 
       for (let childKey in node.children) {
@@ -65,12 +68,6 @@ export class Trie {
     dfs(currentNode);
     result.sort();
     return result;
-  }
-
-  insertMany(words: string[]): void {
-    for (let word of words) {
-      this.insert(word);
-    }
   }
 }
 
@@ -142,19 +139,19 @@ interface Emote {
 const emotes: Emote[] = [
   {
     name: ':catjam',
-    description: '../../public/emotes/catJam.webp',
+    description: '/emotes/catJam.webp',
   },
   {
     name: ':ez',
-    description: '../../public/emotes/EZ.webp',
+    description: '/emotes/EZ.webp',
   },
   {
     name: ':kekw',
-    description: '../../public/emotes/KEKW.webp',
+    description: '/emotes/KEKW.webp',
   },
   {
     name: ':monkas',
-    description: '../../public/emotes/monkaS.webp',
+    description: '/emotes/monkaS.webp',
   },
 ];
 
@@ -163,15 +160,15 @@ export const chatTrie = new Trie();
 
 // Insert users into chatTrie
 for (let user of users) {
-  chatTrie.insert(user.name);
+  chatTrie.insert(user.name.toLocaleLowerCase(), user.description);
 }
 
 // Insert commands into chatTrie
 for (let command of commands) {
-  chatTrie.insert(command.name);
+  chatTrie.insert(command.name.toLocaleLowerCase(), command.description);
 }
 
 // Insert emotes into chatTrie
 for (let emote of emotes) {
-  chatTrie.insert(emote.name);
+  chatTrie.insert(emote.name.toLocaleLowerCase(), emote.description);
 }

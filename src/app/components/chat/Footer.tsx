@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <section className="w-full h-full flex justify-between align-middle items-end mx-auto my-auto">
+    <section className="w-full h-full  pt-2  flex justify-between align-middle items-end mx-auto my-auto">
       {/* Left Side  - Points */}
       <div className="flex items-center gap-2 ">
         <span className="flex flex-row text-center justify-center align-middle">
@@ -72,9 +72,6 @@ export default function Footer() {
             strokeLinejoin="round"
           />
         </svg>
-        <button className="bg-purple-600 text-white rounded-md px-4 py-2 hover:bg-purple-700 focus:outline-none">
-          Chat
-        </button>
       </div>
     </section>
   );
