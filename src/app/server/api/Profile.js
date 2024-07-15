@@ -32,6 +32,7 @@ const generateBase32Secret = () => {
 // Two steps required to get Token => credentials = true && FA = True;
 
 // PUT /api/profile/loginuser => Logs in a user
+// USES Google Authenticator APP mobile
 router.put('/loginuser', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -44,8 +45,8 @@ router.put('/loginuser', async (req, res) => {
         .eq('email', email);
 
       if (error !== null || data.length < 1) {
-        // Doesnt exist in the db
-        res.status(404).send(false);
+        // Doesn't exist in the db
+        return res.status(404).send(false);
       }
 
       // decrypting the password
@@ -57,63 +58,72 @@ router.put('/loginuser', async (req, res) => {
 
         // This Generates the code for QR
         let totp = new OTPAuth.TOTP({
-          issuer: 'StonksAssignment.com',
+          issuer: 'StonksAssignment',
           label: 'StonksAssignment',
           algorithm: 'SHA1',
           digits: 6,
+          period: 30,
           secret: base32_secret,
         });
 
-        let otpauth_url = totp.toString();
+        let otpauth_url = totp.toString(); // Get the otpauth URL
 
         // Generate and send the QR code as a response
-        QRCode.toDataURL(otpauth_url, (err) => {
+        QRCode.toDataURL(otpauth_url, (err, qrCodeUrl) => {
           if (err) {
-            return res.status(500).json({
-              status: 'fail',
-              message: 'Error while generating QR Code',
-            });
+            return res.status(500).send(false);
           }
           // Success we return an object containing qrCodeUrl, secret, and status of completion
-          res.send(200).json({
+          res.json({
             status: true,
-            qrCodeUrl: otpauth_url,
+            qrCodeUrl: qrCodeUrl,
             secret: base32_secret,
+            otpauth_url: otpauth_url, // Include the otpauth_url for debugging
           });
         });
       } else {
-        res.status(404).send(false);
+        return res.status(404).send(false);
       }
+    } else {
+      return res.status(400).send('Email and password are required');
     }
   } catch (error) {
     console.error(error);
+    return res.status(500).send('Server error');
   }
 });
 
 // put /api/profile/verify2fa
 
-router.put('/verify2fa', (req, res) => {
-  const { qrCodeUrl2, secret, token } = req.body;
-  // Verify the TOTP token
-  let totp = new OTPAuth.TOTP({
-    issuer: 'YourSite.com',
-    label: 'YourSite',
-    algorithm: 'SHA1',
-    digits: 6,
-    secret: secret,
-  });
+router.put('/verify2fa', async (req, res) => {
+  try {
+    const { secret, token, email } = req.body;
+    // Verify the TOTP token
+    let totp = new OTPAuth.TOTP({
+      issuer: 'StonksAssignment',
+      label: `StonksAssignment`,
+      algorithm: 'SHA1',
+      digits: 6,
 
-  let delta = totp.validate({ token });
+      secret: secret,
+    });
 
-  const token2 = jwt.sign({ username: data[0].username }, process.env.JWT_KEY, {
-    // jwt token
-    expiresIn: '24h',
-  });
+    let delta = totp.validate({ token });
 
-  if (delta) {
-    res.json(token2);
-  } else {
-    res.status(401).json(false);
+    if (delta === 0) {
+      // if delta is 0, then  tokens are a match. Create JWT
+
+      const token2 = jwt.sign({ email: email }, process.env.JWT_KEY, {
+        // jwt token
+        expiresIn: '24h',
+      });
+      res.json(token2);
+    } else {
+      // token dont match. returning false
+      res.status(401).json(false);
+    }
+  } catch (error) {
+    console.error(error);
   }
 });
 
@@ -151,7 +161,7 @@ router.put('/createuser', async (req, res) => {
         if (error) {
           throw error;
         }
-        res.status(200).json(token);
+        res.json(token);
       }
     } else {
       throw 'Failed Error';
@@ -176,7 +186,7 @@ router.put('/googleLogin', async (req, res) => {
 
     if (fetchError) {
       console.error(fetchError);
-      return res.status(500).send({ error: 'Error fetching user data' });
+      return res.status(500).send(false);
     }
 
     if (existingUser.length > 0) {
@@ -197,7 +207,7 @@ router.put('/googleLogin', async (req, res) => {
 
       if (insertError) {
         console.error(insertError);
-        return res.status(500).send({ error: 'Error creating user' });
+        return res.status(500).send(false);
       }
 
       const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
@@ -207,7 +217,7 @@ router.put('/googleLogin', async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: 'Server error' });
+    res.status(500).send(false);
   }
 });
 
@@ -223,9 +233,13 @@ router.put('/getProfileInformation', authenticateToken, async (req, res) => {
 
       .eq('email', req.body.decoded);
     if (error) {
-      console.log('hi');
       throw error;
     } else if (data.length > 0) {
+      const hashedPassword = data[0].password;
+      const isPasswordCorrect = await bcrypt.compare(
+        'plaintext_password_here',
+        hashedPassword
+      );
       res.status(200).json(data);
     }
   } catch (error) {
@@ -244,7 +258,7 @@ router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
       .update({
         email: email,
         fullName: fullName,
-        password: password,
+        password: await bcrypt.hash(password, 10),
         username: username,
         avatar: avatar,
         updatedAt: new Date().toISOString(), // assuming you have `timestamp` defined somewhere

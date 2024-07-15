@@ -11,7 +11,7 @@ async function authenticateToken(req, res, next) {
 
     // verifies token to see if its valid
     const decoded = await jwt.verify(token, process.env.JWT_KEY);
-    console.log(decoded);
+
     // After decoded is defined. Going to add a property on req.body os we can use it to next route
     req.body.decoded = decoded.email;
 

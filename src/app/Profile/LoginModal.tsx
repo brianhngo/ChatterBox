@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CreateUserModal from './CreateUserModal';
 import axios from 'axios';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -21,7 +21,7 @@ export default function LoginModal({
   const [password, setPassword] = useState('');
 
   // States for Non Google Login Users.
-  const [is2FA, set2FA] = useState(false); // False - ON LOGIN PAGE
+  const [is2FA, setIs2FA] = useState(false); // False - ON LOGIN PAGE
   const [isCredentials, setIsCredentials] = useState(false); // FALSE-  ON 2FA Page
   // BOTH TRUE => Profile component
 
@@ -54,7 +54,9 @@ export default function LoginModal({
       );
 
       if (data) {
-        set2FA(true);
+        console.log(data);
+        console.log(data.otpauth_url);
+        setIs2FA(true);
         // setting the states and passing it down to 2FAModal Component
         setStatus(data.status);
         setQrCodeUrl(data.qrCodeUrl);
@@ -70,31 +72,30 @@ export default function LoginModal({
   // should return a token
   const generateQRCode = async (
     status: boolean,
-    qrCodeUrl2: any,
+    event: any,
     secret: any,
-    token: any
+    token: any,
+    email: string
   ) => {
     try {
+      event.preventDefault();
       if (status) {
         // User Credentials Valid
 
         const { data } = await axios.put(
-          'http://localhost:3001/api/profile/verify2a',
+          'http://localhost:3001/api/profile/verify2fa',
           {
-            qrCodeUrl2: qrCodeUrl2,
             secret: secret,
             token: token,
+            email: email,
           }
         );
         if (data) {
-          // if the token is returned, setIsCredential to true
+          // 2FA tokens is valid, and indeed the correct user
+
           setIsCredentials(true);
-          if (isCredentials && is2FA) {
-            // last safe guard
-            localStorage.setItem('token', data);
-            toggleModal();
-            handleSetHasToken(true);
-          }
+
+          localStorage.setItem('token', data);
         }
       } else {
         throw 'Error';
@@ -103,6 +104,13 @@ export default function LoginModal({
       console.error('Error generating QR code:', error);
     }
   };
+
+  useEffect(() => {
+    if (isCredentials && is2FA) {
+      toggleModal();
+      handleSetHasToken(true);
+    }
+  }, [isCredentials]);
 
   // Google Login Handler - Will Not have 2FA
   const googleHandler = async (event: any) => {
@@ -241,6 +249,8 @@ export default function LoginModal({
             qrCodeUrl={qrCodeUrl}
             status={status}
             secret={secret}
+            email={email}
+            toggleModal={toggleModal}
           />
         )
       ) : (
