@@ -8,6 +8,10 @@ dotenv.config();
 const authenticateToken = require('./ProfileMiddleware');
 const googleClient = require('./GoogleAuth');
 const cors = require('cors');
+const OTPAuth = require('otpauth');
+const { encode } = require('hi-base32');
+const QRCode = require('qrcode');
+const crypto = require('crypto');
 router.use(cors());
 
 // GET /api/profile/
@@ -15,12 +19,24 @@ router.get('/', async (req, res) => {
   res.send('hi');
 });
 
+const generateBase32Secret = () => {
+  try {
+    const buffer = crypto.randomBytes(20);
+    const base32 = encode(buffer).replace(/=/g, '').substring(0, 24);
+    return base32;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Two steps required to get Token => credentials = true && FA = True;
+
 // PUT /api/profile/loginuser => Logs in a user
 router.put('/loginuser', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Get the encrypted password from supabase
+    // Credentials - Get the encrypted password from supabase
     if (email && password) {
       const { data, error } = await supabase
         .from('Profile')
@@ -28,29 +44,76 @@ router.put('/loginuser', async (req, res) => {
         .eq('email', email);
 
       if (error !== null || data.length < 1) {
-        // if error or returning array is length 0. Return 404
-        console.log(data.length, error, 'hi');
+        // Doesnt exist in the db
         res.status(404).send(false);
       }
 
+      // decrypting the password
       let decryptPassword = await bcrypt.compare(password, data[0].password);
 
       if (decryptPassword) {
-        const token = jwt.sign(
-          { username: data[0].username },
-          process.env.JWT_KEY,
-          {
-            expiresIn: '24h',
+        const base32_secret = generateBase32Secret(); // generate a secret key
+        req.body.secret = base32_secret;
+
+        // This Generates the code for QR
+        let totp = new OTPAuth.TOTP({
+          issuer: 'StonksAssignment.com',
+          label: 'StonksAssignment',
+          algorithm: 'SHA1',
+          digits: 6,
+          secret: base32_secret,
+        });
+
+        let otpauth_url = totp.toString();
+
+        // Generate and send the QR code as a response
+        QRCode.toDataURL(otpauth_url, (err) => {
+          if (err) {
+            return res.status(500).json({
+              status: 'fail',
+              message: 'Error while generating QR Code',
+            });
           }
-        );
-        res.status(200).send(token);
+          // Success we return an object containing qrCodeUrl, secret, and status of completion
+          res.send(200).json({
+            status: true,
+            qrCodeUrl: otpauth_url,
+            secret: base32_secret,
+          });
+        });
       } else {
-        console.log('hello');
         res.status(404).send(false);
       }
     }
   } catch (error) {
     console.error(error);
+  }
+});
+
+// put /api/profile/verify2fa
+
+router.put('/verify2fa', (req, res) => {
+  const { qrCodeUrl2, secret, token } = req.body;
+  // Verify the TOTP token
+  let totp = new OTPAuth.TOTP({
+    issuer: 'YourSite.com',
+    label: 'YourSite',
+    algorithm: 'SHA1',
+    digits: 6,
+    secret: secret,
+  });
+
+  let delta = totp.validate({ token });
+
+  const token2 = jwt.sign({ username: data[0].username }, process.env.JWT_KEY, {
+    // jwt token
+    expiresIn: '24h',
+  });
+
+  if (delta) {
+    res.json(token2);
+  } else {
+    res.status(401).json(false);
   }
 });
 
@@ -153,7 +216,7 @@ router.put('/googleLogin', async (req, res) => {
 router.put('/getProfileInformation', authenticateToken, async (req, res) => {
   try {
     // Token validation passed if we reached this far;
-    console.log(req.body.decoded);
+
     const { data, error } = await supabase
       .from('Profile')
       .select('*')
@@ -163,7 +226,6 @@ router.put('/getProfileInformation', authenticateToken, async (req, res) => {
       console.log('hi');
       throw error;
     } else if (data.length > 0) {
-      console.log(data);
       res.status(200).json(data);
     }
   } catch (error) {

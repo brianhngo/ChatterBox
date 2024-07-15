@@ -12,23 +12,23 @@ export default function ProfileModal({ toggleProfileModal }: ProfileModalProp) {
   const [fullName, setFullName] = useState('');
   const [avatar, setAvatar] = useState('');
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
   };
 
-  const handleUsernameChange = (event) => {
+  const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
   };
 
-  const handleFullNameChange = (event) => {
+  const handleFullNameChange = (event: any) => {
     setFullName(event.target.value);
   };
 
-  const handleAvatarChange = (event) => {
+  const handleAvatarChange = (event: any) => {
     setAvatar(event.target.value);
   };
 
@@ -57,7 +57,7 @@ export default function ProfileModal({ toggleProfileModal }: ProfileModalProp) {
   };
 
   // when update button is pressed. update information in DB
-  const updateProfileInfo = async (event) => {
+  const updateProfileInfo = async (event: any) => {
     try {
       event.preventDefault();
       const token = window.localStorage.getItem('token');
