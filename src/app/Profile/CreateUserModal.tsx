@@ -3,11 +3,13 @@ import axios from 'axios';
 interface CreateUserProps {
   toggleModal: () => void;
   setIsSignUp: any;
+  handleSetHasToken: (value: boolean) => void;
 }
 
 export default function CreateUserModal({
   toggleModal,
   setIsSignUp,
+  handleSetHasToken,
 }: CreateUserProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -32,8 +34,10 @@ export default function CreateUserModal({
     setPassword2(event.target.value);
   };
 
-  const submitHandler = async () => {
+  // When submit is clicked, we create a user to our db
+  const submitHandler = async (event: any) => {
     try {
+      event.preventDefault();
       if (password !== password2) {
         // Passwords do not match
         throw 'Error';
@@ -46,6 +50,10 @@ export default function CreateUserModal({
             email: email,
           }
         );
+
+        localStorage.setItem('token', data);
+        handleSetHasToken(true);
+        toggleModal();
       }
     } catch (error) {
       console.error(error);
@@ -137,7 +145,7 @@ export default function CreateUserModal({
           Back to Login page
         </p>
         <button
-          onClick={() => submitHandler()}
+          onClick={(event) => submitHandler(event)}
           className="w-full mt-5 bg-blue-600 text-white text-lg font-medium py-2.5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
           Create Account
         </button>
