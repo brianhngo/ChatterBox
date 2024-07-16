@@ -5,6 +5,7 @@ import Header from './Header';
 import ChatBody from './ChatBody';
 import ChatInput from './ChatInput';
 import Footer from './Footer';
+import Link from 'next/link';
 
 export default function Chat() {
   const [messages, setMessages] = useState([

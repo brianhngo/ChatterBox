@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const morgan = require('morgan');
 const profileRouter = require('./api/Profile');
+const channelRouter = require('./api/Channel');
+const followingRouter = require('./api/Following');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 dotenv.config();
@@ -19,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/api/profile', profileRouter);
+app.use('/api/channel', channelRouter);
+app.use('/api/following', followingRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

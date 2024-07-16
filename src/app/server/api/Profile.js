@@ -147,21 +147,63 @@ router.put('/createuser', async (req, res) => {
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const { data, error } = await supabase
+        const { data, error: insertError } = await supabase
           .from('Profile')
           .insert([
             { username: username, password: hashedPassword, email: email },
-          ]);
+          ])
+          .select('id');
 
-        // Creating the token
-        const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
-          expiresIn: '24h',
-        });
+        if (insertError) {
+          throw insertError;
+        } else {
+          const { data: userUuid, error: selectError } = await supabase
+            .from('Profile')
+            .select('id')
+            .eq('email', email)
+            .single();
+          // Insert into Followings Table
 
-        if (error) {
-          throw error;
+          const { data: followingsData, error: followingsError } =
+            await supabase
+              .from('Following')
+              .insert([{ uuid: userUuid.id, following: {} }]);
+
+          if (followingsError) {
+            throw followingsError;
+          }
+
+          // Insert into Channel Table
+          const { data: channelData, error: ChannelError } = await supabase
+            .from('Channel')
+            .insert([
+              {
+                uuid: userUuid.id,
+                Status: false,
+                FollowersCount: 0,
+                SubCount: 0,
+              },
+            ]);
+
+          if (ChannelError) {
+            throw ChannelError;
+          }
+
+          // Insert into Role Table
+          const { data: roleData, error: roleError } = await supabase
+            .from('Role')
+            .insert([{ uuid: userUuid.id, Role: 'user' }]);
+
+          if (roleError) {
+            throw roleError;
+          }
+
+          // Creating the token
+          const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
+            expiresIn: '24h',
+          });
+          res.json(token);
         }
-        res.json(token);
       }
     } else {
       throw 'Failed Error';
@@ -201,19 +243,60 @@ router.put('/googleLogin', async (req, res) => {
       return res.status(200).json(token);
     } else {
       // User does not exist, so insert into the database
+      let index = email.indexOf('@'); // everything before '@' will be a username
       const { data, error: insertError } = await supabase
         .from('Profile')
-        .insert([{ email: email }]);
+        .insert([
+          { email: email, username: data.username.slice(0, index + 1) },
+        ]);
 
       if (insertError) {
         console.error(insertError);
-        return res.status(500).send(false);
-      }
+      } else {
+        const { data: userUuid, error: selectError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('email', email)
+          .single();
 
-      const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
-        expiresIn: '24h',
-      });
-      return res.status(200).json(token);
+        // Insert into Followings Table
+        const { data: followingsData, error: followingsError } = await supabase
+          .from('Following')
+          .insert([{ uuid: userUuid.id, following: {} }]);
+
+        if (followingsError) {
+          throw followingsError;
+        }
+
+        // Insert into Channel Table
+        const { data: channelData, error: ChannelError } = await supabase
+          .from('Channel')
+          .insert([
+            {
+              uuid: userUuid.id,
+              Status: false,
+              FollowersCount: 0,
+              SubCount: 0,
+            },
+          ]);
+
+        if (ChannelError) {
+          throw ChannelError;
+        }
+
+        // Insert into Role Table
+        const { data: roleData, error: roleError } = await supabase
+          .from('Role')
+          .insert([{ uuid: userUuid.id, Role: 'user' }]);
+
+        if (roleError) {
+          throw roleError;
+        }
+        const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
+          expiresIn: '24h',
+        });
+        return res.status(200).json(token);
+      }
     }
   } catch (error) {
     console.error(error);
@@ -236,10 +319,7 @@ router.put('/getProfileInformation', authenticateToken, async (req, res) => {
       throw error;
     } else if (data.length > 0) {
       const hashedPassword = data[0].password;
-      const isPasswordCorrect = await bcrypt.compare(
-        'plaintext_password_here',
-        hashedPassword
-      );
+
       res.status(200).json(data);
     }
   } catch (error) {
@@ -276,6 +356,41 @@ router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
 });
 
 // PUT /api/profile/authenticate Authenticate user when he refresh page/ logs in
+
+// put /api/profile/changePassword
+
+router.put('/changePassword', authenticateToken, async (req, res) => {
+  try {
+    const { newPassword, oldPassword, decoded } = req.body;
+    const { data, error } = await supabase
+      .from('Profile')
+      .select('*')
+      .eq('email', decoded);
+
+    if (data.length > 0) {
+      const storedPassword = data[0].password;
+      const isPasswordCorrect = await bcrypt.compare(
+        oldPassword,
+        storedPassword
+      );
+
+      if (isPasswordCorrect) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const { data, error } = await supabase
+          .from('Profile')
+          .update({ password: hashedPassword })
+          .eq('email', decoded);
+      } else {
+        res.status(404).send(false);
+      }
+    } else {
+      res.status(404).send(false);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(false);
+  }
+});
 
 router.put('/authenticate', authenticateToken, async (req, res) => {
   try {

@@ -6,6 +6,7 @@ async function authenticateToken(req, res, next) {
   try {
     // checks if token exist
     if (!token) {
+      req.body.guest = true;
       throw 'Token doesnt exist';
     }
 
@@ -18,7 +19,7 @@ async function authenticateToken(req, res, next) {
     next();
   } catch (error) {
     // fake token !! HACKER!!
-    console.log('hi');
+    console.log('token error');
     return res.status(401).json(false);
   }
 }
