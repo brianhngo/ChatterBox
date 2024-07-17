@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv');
-
 const cors = require('cors');
 const morgan = require('morgan');
 const profileRouter = require('./api/Profile');
@@ -9,6 +8,8 @@ const followingRouter = require('./api/Following');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 dotenv.config();
+
+const { Server } = require('socket.io');
 
 const app = express();
 const port = process.env.PORT;
@@ -24,6 +25,28 @@ app.use('/api/profile', profileRouter);
 app.use('/api/channel', channelRouter);
 app.use('/api/following', followingRouter);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+});
+
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    // methods: ['GET', 'POST'],
+    // allowedHeaders: ['Content-Type'],
+    credentials: true,
+  },
+});
+
+io.on('connection', (socket) => {
+  // console.log('A user connected');
+
+  socket.on('chat message', (msg) => {
+    // console.log('Message received:', msg);
+    io.emit('chat message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    // console.log('User disconnected');
+  });
 });

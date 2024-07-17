@@ -29,7 +29,7 @@ export default function Channel({
         }
       );
       if (data) {
-        setIsFollowing(true);
+        setIsFollowing(data.Status);
       }
     } catch (error) {
       console.error(error);
@@ -83,13 +83,7 @@ export default function Channel({
   return (
     <div className="flex flex-col w-full h-full items-center justify-center border border-gray-300 p-4">
       {/* Video */}
-      <h1 className="text-2xl text-gray-600 mb-3">
-        {username} Stream{' '}
-        <span
-          className={`text-md ${status ? 'text-green-500' : 'text-red-500'}`}>
-          {status ? 'Online' : 'Offline'}
-        </span>
-      </h1>
+      <h1 className="text-2xl text-gray-600 mb-3">{username} Stream </h1>
       <div className="w-full h-[50vh] bg-gray-200 flex items-center justify-center">
         <p className="text-xl">Video</p>
       </div>

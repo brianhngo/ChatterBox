@@ -16,7 +16,6 @@ export default function ChannelPreview() {
       if (data) {
         setChannels(data);
       }
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

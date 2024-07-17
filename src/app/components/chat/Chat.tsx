@@ -46,7 +46,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="border border-black 2xl:w-[40vw] w-[55vw] 2xl:h-[50%] h-[50vh] mx-auto flex flex-col justify-center items-center">
+    <div className="border border-black 2xl:w-[40vw] w-[55vw] 2xl:h-[100%] h-full mx-auto flex flex-col justify-center items-center">
       {/* Header Section */}
       <header className=" p-2 w-full border-b border-black border-opacity-100">
         <Header />

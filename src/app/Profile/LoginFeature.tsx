@@ -1,8 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
-
+Link;
 import axios from 'axios';
+import Link from 'next/link';
 
 export default function LoginFeature() {
   const [isModal, setIsModal] = useState(false);
@@ -85,6 +86,11 @@ export default function LoginFeature() {
         </div>
       ) : (
         <>
+          <Link
+            className="text-black text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center justify-between mr-2 mb-2 h-[52px]"
+            href="/Homepage">
+            Homepage
+          </Link>
           <button
             onClick={(event) => logout(event)}
             type="button"

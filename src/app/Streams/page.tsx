@@ -21,7 +21,7 @@ export default function StreamsList() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen w-screen bg-white">
+    <div className="flex flex-col min-h-screen w-4/5 bg-white">
       <h1 className="text-center mt-5 text-2xl text-blue-600 bold underline mb-5">
         {' '}
         List of Active Streamers{' '}

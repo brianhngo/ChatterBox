@@ -33,7 +33,7 @@ export default function Profile() {
   const getProfileInfo = async () => {
     try {
       const token = window.localStorage.getItem('token');
-      console.log(token);
+
       const { data } = await axios.put(
         'http://localhost:3001/api/profile/getProfileInformation',
         {
@@ -164,6 +164,7 @@ export default function Profile() {
             Avatar
           </label>
           <input
+            type="file"
             value={avatar}
             onChange={handleAvatarChange}
             required

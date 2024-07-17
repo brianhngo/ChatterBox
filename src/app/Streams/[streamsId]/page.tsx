@@ -5,6 +5,7 @@ import axios from 'axios';
 import Channel from '@/app/Channel/Channel';
 import Chat from '@/app/components/chat/Chat';
 import ChannelPreview from '@/app/Channel/ChannelPreview';
+import Link from 'next/link';
 
 interface Params {
   params: {
@@ -17,7 +18,7 @@ export default function StreamsDetails({ params }: Params) {
     channelData: '',
     followers: 0,
     sub: 0,
-    boolean: false,
+    status: false,
   });
 
   const isFetched = useRef(false); // storing T/F status to control status b/c fetchUser was being called twice
@@ -46,7 +47,9 @@ export default function StreamsDetails({ params }: Params) {
 
   const goOnline = async (event: any) => {
     try {
-      await axios.put('http://localhost:3001/api/channel/goLive');
+      await axios.put('http://localhost:3001/api/channel/goLive', {
+        token: window.localStorage.getItem('token'),
+      });
       setGoOnlineStatus(true);
     } catch (error) {
       console.error(error);
@@ -55,8 +58,14 @@ export default function StreamsDetails({ params }: Params) {
 
   const goOffline = async (event: any) => {
     try {
-      await axios.put('http://localhost:3001/api/channel/goOffline');
+      await axios.put('http://localhost:3001/api/channel/goOffline', {
+        token: window.localStorage.getItem('token'),
+      });
       setGoOnlineStatus(false);
+      setChannelData({
+        ...channelData,
+        status: false,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -65,10 +74,18 @@ export default function StreamsDetails({ params }: Params) {
   const checkOnlineStatus = async () => {
     try {
       // check online/offline status for buttons
+
       const { data } = await axios.put(
-        'http://localhost:3001/api/channel/checkStatus'
+        'http://localhost:3001/api/channel/checkStatus',
+        {
+          token: window.localStorage.getItem('token'),
+        }
       );
-      setGoOnlineStatus(data.isOnline);
+      setChannelData({
+        ...channelData,
+        status: true,
+      });
+      setGoOnlineStatus(data);
     } catch (error) {
       console.error(error);
     }
@@ -76,7 +93,7 @@ export default function StreamsDetails({ params }: Params) {
 
   useEffect(() => {
     checkOnlineStatus();
-  }, [channelData]);
+  }, []);
 
   // When the page loads we are going to get the channel information per that user
   useEffect(() => {
@@ -87,7 +104,12 @@ export default function StreamsDetails({ params }: Params) {
   }, [params.streamsId]);
 
   return (
-    <div className="flex flex-col min-h-screen w-screen bg-white">
+    <div className="flex flex-col min-h-screen justify-center align-middle w-screen bg-white">
+      <Link
+        className=" text-black hover:underline text-lg font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center focus:ring-4  focus:outline-none transition-colors duration-300"
+        href="/Homepage">
+        Back to Homepage
+      </Link>
       <div className="flex flex-row gap-3 align-middle justify-center mt-5">
         {goOnlineStatus ? (
           <button
@@ -103,8 +125,8 @@ export default function StreamsDetails({ params }: Params) {
           </button>
         )}
       </div>
-      <div className="flex flex-row justify-center w-full h-full p-[20px]  ">
-        <div className="w-1/2 border border-gray-800 ">
+      <div className="flex flex-row justify-center w-full p-[20px]  ">
+        <div className="w-1/2 border border-gray-800">
           <Channel
             streamId={params.streamsId}
             username={channelData.username}
@@ -113,7 +135,7 @@ export default function StreamsDetails({ params }: Params) {
             status={channelData.status}
           />
         </div>
-        <div className="w-2/5  h-full">
+        <div className="w-2/5">
           <Chat />
         </div>
       </div>

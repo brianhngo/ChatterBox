@@ -1,9 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { chatTrie, Trie } from './ChatInputUtility';
 import AutoSuggest from './AutoSuggest';
 import Footer from './Footer';
-import { messages } from '../ChatBodyUtility';
+import { messages } from './ChatBodyUtility';
+import io from 'socket.io-client';
 
 export default function ChatInput({
   inputValue,
@@ -16,6 +17,10 @@ export default function ChatInput({
   const [chatTrieState, setChatTrieState] = useState<Trie | null>(null); // storing trie Data
   const [display, setDisplay] = useState<string[]>([]); // suggested display
   const [isFocused, setIsFocused] = useState(true); // T/F on when user clicks out of input box. (True => suggested appear, False => suggested disappears , user clicks off Input)
+
+  const [socket, setSocket] = useState(null);
+
+  const socketRef = useRef(null);
 
   // handles input changes
   const inputValueHandler = (event: any) => {
@@ -30,7 +35,10 @@ export default function ChatInput({
 
   const submitHandler = (newMessage: string) => {
     addMessage(inputValue);
-    setInputValue(''); // Clear input after submission
+    // if (inputValue){
+    //   socket.emit('chat message', inputValue);
+    // }
+    setInputValue('');
   };
 
   const filter = (word: string) => {
@@ -97,7 +105,7 @@ export default function ChatInput({
             <textarea
               value={inputValue}
               onChange={inputValueHandler}
-              className="pl-2 outline-none flex-grow pr-2"
+              className="pl-2 outline-none text-black flex-grow pr-2"
               style={{ resize: 'none' }}
               rows={2}
               onFocus={handleInputFocus}

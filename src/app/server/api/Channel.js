@@ -13,7 +13,7 @@ const { encode } = require('hi-base32');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
 router.use(cors());
-
+const sendEmail = require('./sendEmail');
 // PUT /api/channel/getUserInformation
 
 router.put('/getUserInformation', async (req, res) => {
@@ -83,6 +83,8 @@ router.put('/previews', async (req, res) => {
 
 // api/channel/goLive
 
+// api/channel/goLive
+
 router.put('/goLive', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded; // from authenticateToken
@@ -145,7 +147,7 @@ router.put('/goOffline', authenticateToken, async (req, res) => {
   }
 });
 
-router.get('/checkStatus', authenticateToken, async (req, res) => {
+router.put('/checkStatus', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded; // from authenticateToken
 

@@ -152,7 +152,7 @@ router.put('/checkFollowing', authenticateToken, async (req, res) => {
 router.put('/getFollowingList', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded;
-    console.log(email);
+
     // getting profile for uuid
     const { data: profileData, error: profileError } = await supabase
       .from('Profile')
