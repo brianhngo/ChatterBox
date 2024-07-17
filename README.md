@@ -50,7 +50,7 @@
 <p><strong>B. There gifs that show overall project </strong></p>
 
 <p><strong>2FAModal.png</strong></p>
-<img src="/images/2FAModal.png" alt="2FAModal" />
+<img src="./public/images/2FAModal.png" alt="2FAModal" />
 
 <p><strong>ChangeInfo.png</strong></p>
 <img src="/images/ChangeInfo.png" alt="ChangeInfo" />
@@ -65,7 +65,7 @@
 <img src="/images/ChannelTab.png" alt="ChannelTab" />
 
 <p><strong>ChatTrie.gif</strong></p>
-<img src="/images/ChatTrie.gif" alt="ChatTrie" />
+<img src="./public/images/ChatTrie.gif" alt="ChatTrie" />
 
 <p><strong>CreateAccount.png</strong></p>
 <img src="/images/CreateAccount.png" alt="CreateAccount" />
