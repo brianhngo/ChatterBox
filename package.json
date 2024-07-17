@@ -9,7 +9,7 @@
     "start2": "node src/app/server/index.js",
     "dev:backend": "nodemon src/app/server/index.js",
     "dev:frontend": "next dev",
-    "dev": "npm run dev:backend && npm run dev:frontend"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.44.3",
