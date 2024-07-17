@@ -38,6 +38,7 @@
 <p><strong>A. Running Locally</strong></p>
 
 <ol>
+  <li> Note - I know that .env isn't suppose to be uploaded, I thought I would upload it because if anyone wants to install locally since i cannot get website up. </li>
   <li>Clone the repository from GitHub: <code>git clone &lt;repository-url&gt;</code></li>
   <li>Navigate to the project directory: <code>cd &lt;project-folder&gt;</code></li>
   <li>Install dependencies: <code>npm install</code></li>
@@ -46,4 +47,50 @@
   <li>Open your browser and go to <a href="http://localhost:3000">http://localhost:3000</a> to view the application.</li>
 </ol>
 
-<p><strong>B. Usage</strong></p>
+<p><strong>B. There gifs that show overall project </strong></p>
+
+<p><strong>2FAModal.png</strong></p>
+<img src="/images/2FAModal.png" alt="2FAModal" />
+
+<p><strong>ChangeInfo.png</strong></p>
+<img src="/images/ChangeInfo.png" alt="ChangeInfo" />
+
+<p><strong>ChangePw.png</strong></p>
+<img src="/images/ChangePw.png" alt="ChangePw" />
+
+<p><strong>ChannelPage.png</strong></p>
+<img src="/images/ChannelPage.png" alt="ChannelPage" />
+
+<p><strong>ChannelTab.png</strong></p>
+<img src="/images/ChannelTab.png" alt="ChannelTab" />
+
+<p><strong>ChatTrie.gif</strong></p>
+<img src="/images/ChatTrie.gif" alt="ChatTrie" />
+
+<p><strong>CreateAccount.png</strong></p>
+<img src="/images/CreateAccount.png" alt="CreateAccount" />
+
+<p><strong>CreateUser.gif</strong></p>
+<img src="/images/CreateUser.gif" alt="CreateUser" />
+
+<p><strong>Homepage.gif</strong></p>
+<img src="/images/Homepage.gif" alt="Homepage" />
+
+<p><strong>Homepage.png</strong></p>
+<img src="/images/Homepage.png" alt="Homepage" />
+
+<p><strong>Login2FA.gif</strong></p>
+<img src="/images/Login2FA.gif" alt="Login2FA" />
+
+<p><strong>LoginModal.gif</strong></p>
+<img src="/images/LoginModal.gif" alt="LoginModal" />
+
+<p><strong>LoginModal.png</strong></p>
+<img src="/images/LoginModal.png" alt="LoginModal" />
+
+<p><strong>NavbarProfile.gif</strong></p>
+<img src="/images/NavbarProfile.gif" alt="NavbarProfile" />
+
+<p><strong>ProfileChannel.gif</strong></p>
+<img src="/images/ProfileChannel.gif" alt="ProfileChannel" />
+
