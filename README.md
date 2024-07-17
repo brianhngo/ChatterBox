@@ -32,7 +32,8 @@
 <p><strong>Challenges Faced</strong></p>
 
 <p>The main challenge was visualizing the user flow and optimizing the user experience. Creating a schema and flowchart (available in the public folder of the GitHub repository) helped map out the user journey and clarify feature requirements. This structured approach provided a clear development direction, easing the implementation of features.</p>
-
+<img src ="./public/Frontend.PNG"/>
+<img src = "./public/Database%20schema.PNG"/>
 <p><strong>How to Run the Project</strong></p>
 
 <p><strong>A. Running Locally</strong></p>
@@ -53,44 +54,44 @@
 <img src="./public/images/2FAModal.png" alt="2FAModal" />
 
 <p><strong>ChangeInfo.png</strong></p>
-<img src="/images/ChangeInfo.png" alt="ChangeInfo" />
+<img src="./public/images/ChangeInfo.png" alt="ChangeInfo" />
 
 <p><strong>ChangePw.png</strong></p>
-<img src="/images/ChangePw.png" alt="ChangePw" />
+<img src="./public/images/ChangePw.png" alt="ChangePw" />
 
 <p><strong>ChannelPage.png</strong></p>
-<img src="/images/ChannelPage.png" alt="ChannelPage" />
+<img src="./public/images/ChannelPage.png" alt="ChannelPage" />
 
 <p><strong>ChannelTab.png</strong></p>
-<img src="/images/ChannelTab.png" alt="ChannelTab" />
+<img src="./public/images/ChannelTab.png" alt="ChannelTab" />
 
 <p><strong>ChatTrie.gif</strong></p>
 <img src="./public/images/ChatTrie.gif" alt="ChatTrie" />
 
 <p><strong>CreateAccount.png</strong></p>
-<img src="/images/CreateAccount.png" alt="CreateAccount" />
+<img src="./public/images/CreateAccount.png" alt="CreateAccount" />
 
 <p><strong>CreateUser.gif</strong></p>
-<img src="/images/CreateUser.gif" alt="CreateUser" />
+<img src="./public/images/CreateUser.gif" alt="CreateUser" />
 
 <p><strong>Homepage.gif</strong></p>
-<img src="/images/Homepage.gif" alt="Homepage" />
+<img src="./public/images/Homepage.gif" alt="Homepage" />
 
 <p><strong>Homepage.png</strong></p>
-<img src="/images/Homepage.png" alt="Homepage" />
+<img src="./public/images/Homepage.png" alt="Homepage" />
 
 <p><strong>Login2FA.gif</strong></p>
-<img src="/images/Login2FA.gif" alt="Login2FA" />
+<img src="./public/images/Login2FA.gif" alt="Login2FA" />
 
 <p><strong>LoginModal.gif</strong></p>
-<img src="/images/LoginModal.gif" alt="LoginModal" />
+<img src="./public/images/LoginModal.gif" alt="LoginModal" />
 
 <p><strong>LoginModal.png</strong></p>
-<img src="/images/LoginModal.png" alt="LoginModal" />
+<img src="./public/images/LoginModal.png" alt="LoginModal" />
 
 <p><strong>NavbarProfile.gif</strong></p>
-<img src="/images/NavbarProfile.gif" alt="NavbarProfile" />
+<img src="./public/images/NavbarProfile.gif" alt="NavbarProfile" />
 
 <p><strong>ProfileChannel.gif</strong></p>
-<img src="/images/ProfileChannel.gif" alt="ProfileChannel" />
+<img src="./public/images/ProfileChannel.gif" alt="ProfileChannel" />
 
