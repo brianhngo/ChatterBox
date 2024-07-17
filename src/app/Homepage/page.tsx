@@ -28,6 +28,7 @@ export default function Homepage() {
         </Link>
         <div>
           <Link
+            onClick={() => window.location.reload()}
             href="/"
             className='bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center focus:ring-4 focus:ring-blue-300 focus:outline-none transition-colors duration-300">'
             onClick={() => logOutHandler}>
