@@ -34,7 +34,7 @@ export default function ChannelPreview() {
         channels.map((channel) => (
           <div
             key={channel?.id}
-            className="flex flex-col w-[20%] h-auto border border-gray-300 p-2 shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-100">
+            className="flex flex-col w-[20%] h-auto border border-gray-300 p-2 shadow-md cursor-pointer hover:shadow-lg  hover:bg-gray-100">
             <div className="w-full h-[200px] bg-gray-200 flex items-center justify-center">
               <p className="text-lg">Video Placeholder</p>
             </div>

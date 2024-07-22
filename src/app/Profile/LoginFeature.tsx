@@ -8,10 +8,18 @@ import Link from 'next/link';
 export default function LoginFeature() {
   const [isModal, setIsModal] = useState(false);
   const [hasToken, setHasToken] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   // Toggles the modal true to false
   const toggleModal = () => {
+    console.log('hi');
     setIsModal(!isModal);
+    setIsSignUp(false);
+  };
+
+  const toggleSignUpModal = (value: boolean, value2: boolean) => {
+    setIsModal(value2);
+    setIsSignUp(value);
   };
 
   // this prevents modal being active and the user being able to scroll
@@ -60,13 +68,13 @@ export default function LoginFeature() {
   return (
     <>
       {hasToken === false ? (
-        <div className="flex flex-row justify-center align-middle">
+        <div className="flex flex-row justify-center align-middle gap-5">
           <button
-            onClick={toggleModal}
+            onClick={() => toggleModal()}
             type="button"
-            className="text-white text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center justify-between mr-2 mb-2 h-[52px]">
+            className="text-white text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg p-2 text-center inline-flex items-center justify-between  ">
             <svg
-              className="mr-2  w-[40px] h-[20px]"
+              className=" w-[40px] h-[20px]"
               xmlns="http://www.w3.org/2000/svg"
               fill="WHITE"
               viewBox="0 0 32 32"
@@ -75,12 +83,42 @@ export default function LoginFeature() {
             </svg>
             Login
           </button>
+          <button
+            onClick={() => toggleSignUpModal(true, true)}
+            type="button"
+            className="text-white text-lg bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg p-2 text-center inline-flex items-center justify-between  ">
+            <svg
+              className="w-[40px] h-[20px]"
+              fill="WHITE"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              height="800px"
+              width="800px"
+              version="1.1"
+              id="_x32_"
+              viewBox="0 0 512 512"
+              xmlSpace="preserve">
+              <g>
+                <polygon
+                  className="st0"
+                  points="374.107,448.835 34.01,448.835 34.01,194.102 164.947,194.102 164.947,63.165 374.107,63.165    374.107,96.698 408.117,64.049 408.117,29.155 164.947,29.155 34.01,160.092 0,194.102 0,482.845 408.117,482.845 408.117,282.596    374.107,318.034  "
+                />
+                <path
+                  className="st0"
+                  d="M508.609,118.774l-51.325-51.325c-4.521-4.522-11.852-4.522-16.372,0L224.216,275.561   c-1.344,1.344-2.336,2.998-2.889,4.815l-26.21,86.117c-2.697,8.861,5.586,17.144,14.447,14.447l88.886-27.052l210.159-218.741   C513.13,130.626,513.13,123.295,508.609,118.774z M243.986,349.323l-16.877-18.447l11.698-38.447l29.139,15.678l15.682,29.145   L243.986,349.323z M476.036,110.577L291.414,296.372l-11.728-11.728l185.804-184.631l10.547,10.546   C476.036,110.567,476.036,110.571,476.036,110.577z"
+                />
+              </g>
+            </svg>
+            Sign Up
+          </button>
 
           {isModal ? (
             <LoginModal
               setHasToken={setHasToken}
               toggleModal={toggleModal}
               handleSetHasToken={handleSetHasToken}
+              isSignUp={isSignUp}
+              toggleSignUpModal={toggleSignUpModal}
             />
           ) : null}
         </div>

@@ -9,14 +9,18 @@ interface LoginModalProps {
   toggleModal: () => void;
   handleSetHasToken: (state: boolean) => void;
   setHasToken: (state: boolean) => void;
+  isSignUp: boolean;
+  toggleSignUpModal: (state: boolean, state2: boolean) => void;
 }
 
 export default function LoginModal({
   toggleModal,
   handleSetHasToken,
   setHasToken,
+  isSignUp,
+  toggleSignUpModal,
 }: LoginModalProps) {
-  const [isSignUp, setIsSignUp] = useState(false);
+  // const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,12 +41,28 @@ export default function LoginModal({
     setPassword(event.target.value);
   };
 
+  // error message
+  const [errorMessage, setErrorMessage] = useState(false);
+
+  const errorMessageHandler = (value: boolean) => {
+    setErrorMessage(value);
+    setEmail('');
+    setPassword('');
+  };
+
+  // show password
+  const [showPassword, setShowPassword] = useState(false);
+
+  const showPasswordHandler = (value: boolean) => {
+    setShowPassword(value);
+  };
+
   // Regular Login Handler - Will Have 2FA
   const submitHandler = async (event: any) => {
     event.preventDefault();
     try {
       if (password.length < 1 || email.length < 1) {
-        throw new Error('Email and password are required');
+        errorMessageHandler(true);
       }
 
       const { data } = await axios.put(
@@ -54,17 +74,16 @@ export default function LoginModal({
       );
 
       if (data) {
-        console.log(data);
-        console.log(data.otpauth_url);
         setIs2FA(true);
         // setting the states and passing it down to 2FAModal Component
         setStatus(data.status);
         setQrCodeUrl(data.qrCodeUrl);
         setSecret(data.secret);
+        setErrorMessage(false);
       }
     } catch (error) {
       console.error('Login error:', error);
-      // Handle error (e.g., show error message to user)
+      errorMessageHandler(true);
     }
   };
 
@@ -131,8 +150,10 @@ export default function LoginModal({
         localStorage.setItem('token', data);
         toggleModal();
         handleSetHasToken(true);
+        errorMessageHandler(false);
       }
     } catch (error) {
+      errorMessageHandler(true);
       console.error('Google login error:', error);
     }
   };
@@ -149,9 +170,16 @@ export default function LoginModal({
               <h1 className="text-3xl mt-4 font-bold text-center mb-6 text-gray-800">
                 Welcome Back
               </h1>
-              <p className="text-center text-gray-600 mb-8">
+              <p className="text-center text-lg text-gray-600 mb-4">
                 Sign into your account
               </p>
+              {errorMessage ? (
+                <p className="text-center text-md text-red-600 mb-4">
+                  {' '}
+                  Error. Credentials do not match{' '}
+                </p>
+              ) : null}
+
               <form onSubmit={submitHandler}>
                 <div className="mb-6">
                   <label
@@ -167,10 +195,12 @@ export default function LoginModal({
                     name="email"
                     type="email"
                     placeholder="your@email.com"
-                    className="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+                    className={`bg-gray-100 border text-gray-700 ${
+                      errorMessage ? 'border-red-500' : 'border-gray-300'
+                    } text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5`}
                   />
                 </div>
-                <div className="mb-6">
+                <div className="mb-6 relative">
                   <label
                     htmlFor="password-input"
                     className="block mb-2 text-lg font-medium text-gray-700">
@@ -182,10 +212,51 @@ export default function LoginModal({
                     required
                     id="password-input"
                     name="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
-                    className="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+                    className={`bg-gray-100 border text-gray-700 ${
+                      errorMessage ? 'border-red-500' : 'border-gray-300'
+                    } text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 pr-10`}
                   />
+                  {showPassword === false ? (
+                    <svg
+                      onClick={() => setShowPassword(true)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="absolute right-3 top-10 cursor-pointer mt-1">
+                      <path
+                        d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5"
+                        stroke="#000000"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      onClick={() => setShowPassword(false)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      viewBox="0 0 24 24"
+                      className="absolute right-3 top-10 cursor-pointer mt-1"
+                      fill="none">
+                      <path
+                        d="M9 4.45962C9.91153 4.16968 10.9104 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C3.75612 8.07914 4.32973 7.43025 5 6.82137"
+                        stroke="#1C274C"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+                        stroke="#1C274C"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  )}
                 </div>
                 <div className="grid justify-items-end">
                   <a className="text-sm font-medium hover:underline text-blue-800 mb-3">
@@ -200,7 +271,7 @@ export default function LoginModal({
                 </button>
               </form>
               <button
-                onClick={() => setIsSignUp(true)}
+                onClick={() => toggleSignUpModal(true, true)}
                 className="w-full mt-5 bg-red-600 text-white text-lg font-medium py-2.5 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300">
                 Sign Up
               </button>
@@ -257,7 +328,7 @@ export default function LoginModal({
         <CreateUserModal
           toggleModal={toggleModal}
           handleSetHasToken={handleSetHasToken}
-          setIsSignUp={setIsSignUp}
+          setIsSignUp={toggleSignUpModal}
         />
       )}
     </>
