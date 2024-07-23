@@ -20,22 +20,6 @@ export default function Homepage() {
   return (
     <>
       <main className="flex min-h-screen w-screen flex-col items-center bg-white text-blue-800 p-24 gap-5">
-        <Link
-          className='bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center focus:ring-4 focus:ring-blue-300 focus:outline-none transition-colors duration-300">'
-          href="/">
-          {' '}
-          Homepage
-        </Link>
-        <div>
-          <Link
-            onClick={() => window.location.reload()}
-            href="/"
-            className='bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center focus:ring-4 focus:ring-blue-300 focus:outline-none transition-colors duration-300">'
-            onClick={() => logOutHandler}>
-            Logout
-          </Link>
-        </div>
-
         {/* Horizontal NavBar */}
         <nav className="items-center justify-between w-full md:flex md:w-auto mb-8">
           <ul className="flex border-b-2 text-xl">
@@ -80,7 +64,7 @@ export default function Homepage() {
                     ? 'border-b-2 border-l border-t border-r text-blue-800 hover:text-blue-500'
                     : ''
                 }`}>
-                Followers
+                Following
               </a>
             </li>
           </ul>

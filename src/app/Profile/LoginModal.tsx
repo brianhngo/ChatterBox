@@ -4,6 +4,7 @@ import axios from 'axios';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import FAVerificationModal from './FAVerificationModal';
 import { auth } from '../server/database/firebase.config';
+import { toast } from 'react-toastify';
 
 interface LoginModalProps {
   toggleModal: () => void;
@@ -80,9 +81,11 @@ export default function LoginModal({
         setQrCodeUrl(data.qrCodeUrl);
         setSecret(data.secret);
         setErrorMessage(false);
+        toast.success('Success!');
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Error!!');
       errorMessageHandler(true);
     }
   };
@@ -151,9 +154,11 @@ export default function LoginModal({
         toggleModal();
         handleSetHasToken(true);
         errorMessageHandler(false);
+        toast.success('Success!');
       }
     } catch (error) {
       errorMessageHandler(true);
+      toast.error('Error');
       console.error('Google login error:', error);
     }
   };

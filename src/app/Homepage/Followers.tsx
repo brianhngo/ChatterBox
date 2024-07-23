@@ -26,13 +26,13 @@ export default function Followers() {
   }, []);
 
   return (
-    <div className="flex flex-row gap-5">
+    <div className="flex flex-row gap-5 w-full">
       {followingList.map((element, index) => {
         if (element[1] === true) {
           return (
             <div
               key={index}
-              className="flex flex-col w-full h-auto border border-gray-300 p-2">
+              className="flex flex-col w-[20%]  h-auto border border-gray-300 p-2 cursor-pointer hover:bg-slate-200">
               {/* Video Placeholder */}
               <div className="w-full h-[200px] bg-gray-200 flex items-center justify-center">
                 <p className="text-lg">Video Placeholder</p>

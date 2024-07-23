@@ -12,9 +12,7 @@ import FooterPage from './components/chat/FooterPage';
 export default function Home() {
   return (
     <main className="flex min-h-screen w-screen flex-col items-center bg-white text-blue-800 justify-between ">
-      <div className="w-full">
-        <Navbar />
-      </div>
+      <div className="w-full">{/* <Navbar /> */}</div>
 
       <h1 className="text-blue-800 underline text-4xl pb-5">
         {' '}
@@ -27,7 +25,7 @@ export default function Home() {
       </p>
 
       <div className="flex flex-row justify-center w-full pl-10 pr-24  ">
-        <div className="w-3/5 border border-gray-800 ">
+        <div className="w-1/2 border border-gray-800 ">
           <Channel />
         </div>
         <div className="w-2/5 ">
@@ -45,9 +43,7 @@ export default function Home() {
         </div>
       </div>
       {/* Footer */}
-      <div className="flex flex-row w-full pt-5">
-        <FooterPage />
-      </div>
+      <div className="flex flex-row w-full pt-5">{/* <FooterPage /> */}</div>
     </main>
   );
 }

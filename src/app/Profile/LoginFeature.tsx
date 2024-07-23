@@ -2,17 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
 Link;
+import { useRouter, usePathname } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 
 export default function LoginFeature() {
+  const router = useRouter();
   const [isModal, setIsModal] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
   // Toggles the modal true to false
   const toggleModal = () => {
-    console.log('hi');
     setIsModal(!isModal);
     setIsSignUp(false);
   };
@@ -20,6 +21,10 @@ export default function LoginFeature() {
   const toggleSignUpModal = (value: boolean, value2: boolean) => {
     setIsModal(value2);
     setIsSignUp(value);
+  };
+
+  const navigateTo = (url: string) => {
+    router.push(url);
   };
 
   // this prevents modal being active and the user being able to scroll
@@ -124,11 +129,42 @@ export default function LoginFeature() {
         </div>
       ) : (
         <>
-          <Link
-            className="text-black text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center justify-between mr-2 mb-2 h-[52px]"
-            href="/Homepage">
-            Homepage
-          </Link>
+          <button
+            className="text-white text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center justify-between mr-2 mb-2 h-[52px]"
+            onClick={() => navigateTo('/Homepage')}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              width="24px"
+              height="24px"
+              viewBox="0 0 20 20"
+              version="1.1"
+              className="text-white mr-3">
+              <title>profile_image_round [#1326]</title>
+              <desc>Created with Sketch.</desc>
+              <defs></defs>
+              <g
+                id="Page-1"
+                stroke="none"
+                strokeWidth="1"
+                fill="none"
+                fillRule="evenodd">
+                <g
+                  id="Dribbble-Light-Preview"
+                  transform="translate(-380.000000, -2199.000000)"
+                  fill="#FFFFFF">
+                  <g id="icons" transform="translate(56.000000, 160.000000)">
+                    <path
+                      d="M342,2055.615 C342,2055.722 341.97,2055.821 341.939,2055.918 C341.723,2052.974 339.918,2050.482 337.375,2049.283 C338.368,2048.369 339,2047.071 339,2045.615 C339,2043.534 337.728,2041.753 335.92,2041 L341,2041 C341.552,2041 342,2041.063 342,2041.615 L342,2055.615 Z M339.963,2057 L327.975,2057 C327.974,2057 327.969,2056.741 327.969,2056.701 C327.969,2053.605 330.326,2050.96 333.339,2050.645 C334,2050.733 334.255,2050.622 334.623,2050.576 C337.625,2050.902 339.969,2053.623 339.969,2056.71 C339.969,2056.75 339.964,2057 339.963,2057 L339.963,2057 Z M326,2055.615 L326,2041.615 C326,2041.063 326.448,2041 327,2041 L332.08,2041 C330.272,2041.753 329,2043.534 329,2045.615 C329,2047.06 329.622,2048.351 330.602,2049.264 C328.107,2050.422 326.307,2052.82 326.012,2055.675 C326.011,2055.654 326,2055.636 326,2055.615 L326,2055.615 Z M337,2045.615 C337,2047.055 335.979,2048.26 334.623,2048.548 C334.033,2048.5 333.868,2048.508 333.368,2048.545 C332.017,2048.254 331,2047.052 331,2045.615 C331,2043.961 332.346,2042.615 334,2042.615 C335.654,2042.615 337,2043.961 337,2045.615 L337,2045.615 Z M342,2039 L326,2039 C324.895,2039 324,2039.895 324,2041 L324,2057 C324,2058.104 324.895,2059 326,2059 L342,2059 C343.105,2059 344,2058.104 344,2057 L344,2041 C344,2039.895 343.105,2039 342,2039 L342,2039 Z"
+                      id="profile_image_round-[#1326]"
+                    />
+                  </g>
+                </g>
+              </g>
+            </svg>
+            Profile
+          </button>
+
           <button
             onClick={(event) => logout(event)}
             type="button"

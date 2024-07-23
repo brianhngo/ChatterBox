@@ -1,11 +1,9 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/router';
 import axios from 'axios';
 import Channel from '@/app/Channel/Channel';
 import Chat from '@/app/components/chat/Chat';
 import ChannelPreview from '@/app/Channel/ChannelPreview';
-import Link from 'next/link';
 
 interface Params {
   params: {
@@ -21,29 +19,29 @@ export default function StreamsDetails({ params }: Params) {
     status: false,
   });
 
+  const [isLoading, setIsLoading] = useState(true); // State for loading indicator
+  const [goOnlineStatus, setGoOnlineStatus] = useState(false); // State to track online status
   const isFetched = useRef(false); // storing T/F status to control status b/c fetchUser was being called twice
 
   // Fetching user's channel information
   const fetchUserData = async (username: string) => {
+    setIsLoading(true); // Start loading
     try {
       const { data } = await axios.put(
         'http://localhost:3001/api/channel/getUserInformation',
-        {
-          username: username,
-        }
+        { username: username }
       );
       if (data) {
-        console.log('data', data);
         setChannelData(data);
       } else {
         console.log('No data received');
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
-
-  const [goOnlineStatus, setGoOnlineStatus] = useState(false); // State to track online status
 
   const goOnline = async (event: any) => {
     try {
@@ -73,18 +71,12 @@ export default function StreamsDetails({ params }: Params) {
 
   const checkOnlineStatus = async () => {
     try {
-      // check online/offline status for buttons
-
       const { data } = await axios.put(
         'http://localhost:3001/api/channel/checkStatus',
         {
           token: window.localStorage.getItem('token'),
         }
       );
-      setChannelData({
-        ...channelData,
-        status: true,
-      });
       setGoOnlineStatus(data);
     } catch (error) {
       console.error(error);
@@ -95,7 +87,6 @@ export default function StreamsDetails({ params }: Params) {
     checkOnlineStatus();
   }, []);
 
-  // When the page loads we are going to get the channel information per that user
   useEffect(() => {
     if (!isFetched.current) {
       fetchUserData(params.streamsId);
@@ -103,13 +94,17 @@ export default function StreamsDetails({ params }: Params) {
     }
   }, [params.streamsId]);
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="loader">Loading...</div>{' '}
+        {/* You can replace this with any loading spinner or animation */}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen justify-center align-middle w-screen bg-white">
-      <Link
-        className=" text-black hover:underline text-lg font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center focus:ring-4  focus:outline-none transition-colors duration-300"
-        href="/Homepage">
-        Back to Homepage
-      </Link>
       <div className="flex flex-row gap-3 align-middle justify-center mt-5">
         {goOnlineStatus ? (
           <button
@@ -125,7 +120,7 @@ export default function StreamsDetails({ params }: Params) {
           </button>
         )}
       </div>
-      <div className="flex flex-row justify-center w-full p-[20px]  ">
+      <div className="flex flex-row justify-center w-full p-[20px]">
         <div className="w-1/2 border border-gray-800">
           <Channel
             streamId={params.streamsId}
@@ -139,13 +134,13 @@ export default function StreamsDetails({ params }: Params) {
           <Chat />
         </div>
       </div>
-      {/* Preview Section  */}
+      {/* Preview Section */}
       <div className="flex flex-col w-full">
         <h1 className="text-2xl p-5 bold text-blue-800 underline mb-5 mt-5">
           {' '}
           Other Live Streamers!{' '}
         </h1>
-        <div className="flex  p-5 flex-row gap-5 mb-2">
+        <div className="flex p-5 flex-row gap-5 mb-2">
           <ChannelPreview />
         </div>
       </div>

@@ -342,7 +342,7 @@ router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
         updatedAt: new Date().toISOString(), // assuming you have `timestamp` defined somewhere
       })
       .eq('email', req.body.decoded);
-
+    res.status(200).json(req.body.decoded);
     if (error) {
       throw error;
     } else {
