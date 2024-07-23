@@ -13,19 +13,18 @@ interface Params {
 
 export default function StreamsDetails({ params }: Params) {
   const [channelData, setChannelData] = useState({
-    channelData: '',
+    username: '',
     followers: 0,
     sub: 0,
     status: false,
   });
+  const [hosting, setHosting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [goOnlineStatus, setGoOnlineStatus] = useState(false);
+  const isFetched = useRef(false);
 
-  const [isLoading, setIsLoading] = useState(true); // State for loading indicator
-  const [goOnlineStatus, setGoOnlineStatus] = useState(false); // State to track online status
-  const isFetched = useRef(false); // storing T/F status to control status b/c fetchUser was being called twice
-
-  // Fetching user's channel information
   const fetchUserData = async (username: string) => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     try {
       const { data } = await axios.put(
         'http://localhost:3001/api/channel/getUserInformation',
@@ -39,11 +38,25 @@ export default function StreamsDetails({ params }: Params) {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
-  const goOnline = async (event: any) => {
+  const reduceFollowers = () => {
+    setChannelData((prevData) => ({
+      ...prevData,
+      followers: prevData.followers > 0 ? prevData.followers - 1 : 0, // Ensure followers don't go below 0
+    }));
+  };
+
+  const increaseFollowers = () => {
+    setChannelData((prevData) => ({
+      ...prevData,
+      followers: prevData.followers + 1, // Ensure followers don't go below 0
+    }));
+  };
+
+  const goOnline = async () => {
     try {
       await axios.put('http://localhost:3001/api/channel/goLive', {
         token: window.localStorage.getItem('token'),
@@ -54,7 +67,7 @@ export default function StreamsDetails({ params }: Params) {
     }
   };
 
-  const goOffline = async (event: any) => {
+  const goOffline = async () => {
     try {
       await axios.put('http://localhost:3001/api/channel/goOffline', {
         token: window.localStorage.getItem('token'),
@@ -75,30 +88,30 @@ export default function StreamsDetails({ params }: Params) {
         'http://localhost:3001/api/channel/checkStatus',
         {
           token: window.localStorage.getItem('token'),
+          streamsId: params.streamsId,
         }
       );
-      setGoOnlineStatus(data);
+      if (data) {
+        setGoOnlineStatus(data.statusLive);
+        setHosting(data.hosting);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    checkOnlineStatus();
-  }, []);
-
-  useEffect(() => {
     if (!isFetched.current) {
       fetchUserData(params.streamsId);
       isFetched.current = true;
     }
+    checkOnlineStatus();
   }, [params.streamsId]);
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="loader">Loading...</div>{' '}
-        {/* You can replace this with any loading spinner or animation */}
+        <div className="loader">Loading...</div>
       </div>
     );
   }
@@ -106,19 +119,21 @@ export default function StreamsDetails({ params }: Params) {
   return (
     <div className="flex flex-col min-h-screen justify-center align-middle w-screen bg-white">
       <div className="flex flex-row gap-3 align-middle justify-center mt-5">
-        {goOnlineStatus ? (
-          <button
-            onClick={(event) => goOffline(event)}
-            className="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded-lg">
-            Go Offline
-          </button>
-        ) : (
-          <button
-            onClick={(event) => goOnline(event)}
-            className="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded-lg">
-            Go Live
-          </button>
-        )}
+        {hosting ? (
+          goOnlineStatus ? (
+            <button
+              onClick={goOffline}
+              className="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded-lg">
+              Go Offline
+            </button>
+          ) : (
+            <button
+              onClick={goOnline}
+              className="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded-lg">
+              Go Live
+            </button>
+          )
+        ) : null}
       </div>
       <div className="flex flex-row justify-center w-full p-[20px]">
         <div className="w-1/2 border border-gray-800">
@@ -128,17 +143,19 @@ export default function StreamsDetails({ params }: Params) {
             followers={channelData.followers}
             sub={channelData.sub}
             status={channelData.status}
+            host={hosting}
+            onlineStatus={goOnlineStatus}
+            increaseFollowers={increaseFollowers}
+            reduceFollowers={reduceFollowers}
           />
         </div>
         <div className="w-2/5">
           <Chat />
         </div>
       </div>
-      {/* Preview Section */}
       <div className="flex flex-col w-full">
         <h1 className="text-2xl p-5 bold text-blue-800 underline mb-5 mt-5">
-          {' '}
-          Other Live Streamers!{' '}
+          Other Live Streamers!
         </h1>
         <div className="flex p-5 flex-row gap-5 mb-2">
           <ChannelPreview />

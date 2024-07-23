@@ -5,18 +5,20 @@ async function authenticateToken(req, res, next) {
 
   try {
     // checks if token exist
-    if (!token) {
+
+    if (token === null) {
       req.body.guest = true;
-      throw 'Token doesnt exist';
+      res.status(403).json(false);
+    } else {
+      // verifies token to see if its valid
+      const decoded = await jwt.verify(token, process.env.JWT_KEY);
+
+      // After decoded is defined. Going to add a property on req.body os we can use it to next route
+      req.body.decoded = decoded.email;
+      req.body.decodedUID = decoded.uid;
+
+      next();
     }
-
-    // verifies token to see if its valid
-    const decoded = await jwt.verify(token, process.env.JWT_KEY);
-
-    // After decoded is defined. Going to add a property on req.body os we can use it to next route
-    req.body.decoded = decoded.email;
-
-    next();
   } catch (error) {
     // fake token !! HACKER!!
     console.log('token error');

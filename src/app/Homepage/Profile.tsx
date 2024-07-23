@@ -4,9 +4,11 @@ import axios from 'axios';
 import { storage } from '../server/database/firebase.config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function Profile() {
   const [email, setEmail] = useState('');
+  const router = useRouter();
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
@@ -59,7 +61,9 @@ export default function Profile() {
         setUsername(data[0].username);
         setPassword(data[0].password);
         setFullName(data[0].fullName);
-        setAvatarURL(data[0].avatar);
+        setAvatarURL(
+          data[0].avatar.length > 0 ? data[0].avatar : '/DefaultPicture.png'
+        );
       }
     } catch (error) {
       console.error(error);
@@ -102,8 +106,35 @@ export default function Profile() {
     }
   };
 
+  const verifyToken = async () => {
+    try {
+      const { data } = await axios.put(
+        'http://localhost:3001/api/profile/authenticate',
+        {
+          token: window.localStorage.getItem('token') || null,
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    getProfileInfo();
+    const verify = async () => {
+      const result = await verifyToken();
+      console.log('result', result);
+      if (!result) {
+        // invalid token or hacker! sends them back to homepage
+        router.push('/');
+        toast.error('Error. Not Logged in');
+      } else {
+        getProfileInfo();
+      }
+    };
+
+    verify();
   }, []);
 
   if (loading) {

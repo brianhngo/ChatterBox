@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { passwordStrength } from './ProfileUtility'; // Import the passwordStrength function
+import { toast } from 'react-toastify';
 
 interface CreateUserProps {
   toggleModal: () => void;
@@ -74,6 +75,7 @@ export default function CreateUserModal({
       event.preventDefault();
       if (password !== password2) {
         // Passwords do not match
+        toast.error('Error!');
         errorMessage2Handler(true);
         return;
       } else {
@@ -92,8 +94,10 @@ export default function CreateUserModal({
         setErrorMessge2(false);
         resetFunction();
         toggleModal();
+        toast.success('Successful!');
       }
     } catch (error) {
+      toast.error('Error!');
       errorMessage1Handler(true);
       console.error(error);
     }

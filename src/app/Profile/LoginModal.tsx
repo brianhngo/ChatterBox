@@ -24,6 +24,7 @@ export default function LoginModal({
   // const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [uid, setUid] = useState('');
 
   // States for Non Google Login Users.
   const [is2FA, setIs2FA] = useState(false); // False - ON LOGIN PAGE
@@ -81,6 +82,7 @@ export default function LoginModal({
         setQrCodeUrl(data.qrCodeUrl);
         setSecret(data.secret);
         setErrorMessage(false);
+        setUid(data.uid);
         toast.success('Success!');
       }
     } catch (error) {
@@ -107,6 +109,7 @@ export default function LoginModal({
         const { data } = await axios.put(
           'http://localhost:3001/api/profile/verify2fa',
           {
+            uid: uid,
             secret: secret,
             token: token,
             email: email,

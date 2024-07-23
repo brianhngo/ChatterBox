@@ -63,6 +63,7 @@ export default function LoginFeature() {
     event.preventDefault();
     localStorage.removeItem('token');
     setHasToken(false);
+    router.push('/');
   };
 
   // when page loads, we need to check if the token exist and if its still active

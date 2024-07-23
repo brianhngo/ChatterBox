@@ -14,11 +14,6 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 router.use(cors());
 
-// GET /api/profile/
-router.get('/', async (req, res) => {
-  res.send('hi');
-});
-
 const generateBase32Secret = () => {
   try {
     const buffer = crypto.randomBytes(20);
@@ -32,7 +27,7 @@ const generateBase32Secret = () => {
 // Two steps required to get Token => credentials = true && FA = True;
 
 // PUT /api/profile/loginuser => Logs in a user
-// USES Google Authenticator APP mobile
+// USES Google Authenticator APP mobile !!
 router.put('/loginuser', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -75,6 +70,7 @@ router.put('/loginuser', async (req, res) => {
           }
           // Success we return an object containing qrCodeUrl, secret, and status of completion
           res.json({
+            uid: data[0].id,
             status: true,
             qrCodeUrl: qrCodeUrl,
             secret: base32_secret,
@@ -93,11 +89,11 @@ router.put('/loginuser', async (req, res) => {
   }
 });
 
-// put /api/profile/verify2fa
+// put /api/profile/verify2fa !!
 
 router.put('/verify2fa', async (req, res) => {
   try {
-    const { secret, token, email } = req.body;
+    const { secret, token, email, uid } = req.body;
     // Verify the TOTP token
     let totp = new OTPAuth.TOTP({
       issuer: 'StonksAssignment',
@@ -113,7 +109,7 @@ router.put('/verify2fa', async (req, res) => {
     if (delta === 0) {
       // if delta is 0, then  tokens are a match. Create JWT
 
-      const token2 = jwt.sign({ email: email }, process.env.JWT_KEY, {
+      const token2 = jwt.sign({ email: email, uid: uid }, process.env.JWT_KEY, {
         // jwt token
         expiresIn: '24h',
       });
@@ -127,7 +123,7 @@ router.put('/verify2fa', async (req, res) => {
   }
 });
 
-// PUT /api/profile/createuser => Creates new User
+// PUT /api/profile/createuser => Creates new User !!
 
 router.put('/createuser', async (req, res) => {
   try {
@@ -145,6 +141,7 @@ router.put('/createuser', async (req, res) => {
       if (data && data.length > 0) {
         res.status(404).json(false);
       } else {
+        // Adding the username & password to DB
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const { data, error: insertError } = await supabase
@@ -157,17 +154,12 @@ router.put('/createuser', async (req, res) => {
         if (insertError) {
           throw insertError;
         } else {
-          const { data: userUuid, error: selectError } = await supabase
-            .from('Profile')
-            .select('id')
-            .eq('email', email)
-            .single();
           // Insert into Followings Table
 
           const { data: followingsData, error: followingsError } =
             await supabase
               .from('Following')
-              .insert([{ uuid: userUuid.id, following: {} }]);
+              .insert([{ uuid: data[0].id, following: {} }]);
 
           if (followingsError) {
             throw followingsError;
@@ -178,7 +170,7 @@ router.put('/createuser', async (req, res) => {
             .from('Channel')
             .insert([
               {
-                uuid: userUuid.id,
+                uuid: data[0].id,
                 Status: false,
                 FollowersCount: 0,
                 SubCount: 0,
@@ -192,16 +184,20 @@ router.put('/createuser', async (req, res) => {
           // Insert into Role Table
           const { data: roleData, error: roleError } = await supabase
             .from('Role')
-            .insert([{ uuid: userUuid.id, Role: 'user' }]);
+            .insert([{ uuid: data[0].id, Role: 'user' }]);
 
           if (roleError) {
             throw roleError;
           }
 
-          // Creating the token
-          const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
-            expiresIn: '24h',
-          });
+          // Creating the token will store two values - userUuid and email
+          const token = jwt.sign(
+            { uid: data[0].id, email: email },
+            process.env.JWT_KEY,
+            {
+              expiresIn: '24h',
+            }
+          );
           res.json(token);
         }
       }
@@ -214,7 +210,7 @@ router.put('/createuser', async (req, res) => {
   }
 });
 
-// PUT /api/profile/googleLogin => Logins in via Google. If doesnt exist, make new entry
+// PUT /api/profile/googleLogin => Logins in via Google. If doesnt exist, make new entry !!
 
 router.put('/googleLogin', async (req, res) => {
   try {
@@ -223,7 +219,7 @@ router.put('/googleLogin', async (req, res) => {
     // Check if the email exists in the database
     const { data: existingUser, error: fetchError } = await supabase
       .from('Profile')
-      .select('email')
+      .select('*')
       .eq('email', email);
 
     if (fetchError) {
@@ -234,7 +230,7 @@ router.put('/googleLogin', async (req, res) => {
     if (existingUser.length > 0) {
       // The user exists in your database, so generate a token
       const token = jwt.sign(
-        { email: existingUser[0].email },
+        { email: existingUser[0].email, uid: existingUser[0].id },
         process.env.JWT_KEY,
         {
           expiresIn: '24h',
@@ -246,21 +242,16 @@ router.put('/googleLogin', async (req, res) => {
       let index = email.indexOf('@'); // everything before '@' will be a username
       const { data, error: insertError } = await supabase
         .from('Profile')
-        .insert([{ email: email, username: email.slice(0, index + 1) }]);
+        .insert([{ email: email, username: email.slice(0, index + 1) }])
+        .select('id');
 
       if (insertError) {
-        console.error(insertError);
+        throw insertError;
       } else {
-        const { data: userUuid, error: selectError } = await supabase
-          .from('Profile')
-          .select('id')
-          .eq('email', email)
-          .single();
-
         // Insert into Followings Table
         const { data: followingsData, error: followingsError } = await supabase
           .from('Following')
-          .insert([{ uuid: userUuid.id, following: {} }]);
+          .insert([{ uuid: data[0].id, following: {} }]);
 
         if (followingsError) {
           throw followingsError;
@@ -271,7 +262,7 @@ router.put('/googleLogin', async (req, res) => {
           .from('Channel')
           .insert([
             {
-              uuid: userUuid.id,
+              uuid: data[0].id,
               Status: false,
               FollowersCount: 0,
               SubCount: 0,
@@ -285,14 +276,18 @@ router.put('/googleLogin', async (req, res) => {
         // Insert into Role Table
         const { data: roleData, error: roleError } = await supabase
           .from('Role')
-          .insert([{ uuid: userUuid.id, Role: 'user' }]);
+          .insert([{ uuid: data[0].id, Role: 'user' }]);
 
         if (roleError) {
           throw roleError;
         }
-        const token = jwt.sign({ email: email }, process.env.JWT_KEY, {
-          expiresIn: '24h',
-        });
+        const token = jwt.sign(
+          { email: email, uid: data[0].id },
+          process.env.JWT_KEY,
+          {
+            expiresIn: '24h',
+          }
+        );
         return res.status(200).json(token);
       }
     }
@@ -311,13 +306,11 @@ router.put('/getProfileInformation', authenticateToken, async (req, res) => {
     const { data, error } = await supabase
       .from('Profile')
       .select('*')
-
-      .eq('email', req.body.decoded);
+      .eq('email', req.body.decoded)
+      .eq('id', req.body.decodedUID);
     if (error) {
       throw error;
     } else if (data.length > 0) {
-      const hashedPassword = data[0].password;
-
       res.status(200).json(data);
     }
   } catch (error) {
@@ -325,7 +318,7 @@ router.put('/getProfileInformation', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /api/profile/getProfileInformation => Get user profile information
+// PUT /api/profile/getProfileInformation => Get user profile information !!
 
 router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
   try {
@@ -341,8 +334,9 @@ router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
         avatar: avatar,
         updatedAt: new Date().toISOString(), // assuming you have `timestamp` defined somewhere
       })
-      .eq('email', req.body.decoded);
-    res.status(200).json(req.body.decoded);
+      .eq('email', req.body.decoded)
+      .eq('id', req.body.decodedUID);
+
     if (error) {
       throw error;
     } else {
@@ -355,16 +349,23 @@ router.put('/updateProfileInformation', authenticateToken, async (req, res) => {
 
 // PUT /api/profile/authenticate Authenticate user when he refresh page/ logs in
 
-// put /api/profile/changePassword
+// put /api/profile/changePassword !!
 
 router.put('/changePassword', authenticateToken, async (req, res) => {
   try {
-    const { newPassword, oldPassword, decoded } = req.body;
+    const { newPassword, oldPassword, decoded, decodedUID } = req.body;
     const { data, error } = await supabase
       .from('Profile')
       .select('*')
-      .eq('email', decoded);
-
+      .eq('email', decoded)
+      .eq('id', decodedUID);
+    console.log(
+      newPassword,
+      oldPassword,
+      data[0].password,
+      decoded,
+      decodedUID
+    );
     if (data.length > 0) {
       const storedPassword = data[0].password;
       const isPasswordCorrect = await bcrypt.compare(
@@ -379,7 +380,7 @@ router.put('/changePassword', authenticateToken, async (req, res) => {
           .update({ password: hashedPassword })
           .eq('email', decoded);
       } else {
-        res.status(404).send(false);
+        res.status(200).send(true);
       }
     } else {
       res.status(404).send(false);
@@ -390,9 +391,12 @@ router.put('/changePassword', authenticateToken, async (req, res) => {
   }
 });
 
+// !!
 router.put('/authenticate', authenticateToken, async (req, res) => {
   try {
-    res.status(200).json(true);
+    if (req.body.decoded && req.body.decodedUID) {
+      res.status(200).json(true);
+    }
   } catch (error) {
     console.error(error);
   }

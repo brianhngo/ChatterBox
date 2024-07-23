@@ -17,45 +17,42 @@ const crypto = require('crypto');
 router.put('/addFollow', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded;
+    const uid = req.body.decodedUID;
     const streamId = req.body.username; // the streams id
+    const followers = req.body.followers;
 
-    // getting profile for uuid
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id')
-      .eq('email', email)
+    // if uuid exists, gets the your owns following db.
+    const { data: followingData, error: followingError } = await supabase
+      .from('Following')
+      .select('following')
+      .eq('uuid', uid)
       .single();
 
-    if (profileData) {
-      // if uuid exists
-      const { data: followingData, error: followingError } = await supabase
+    if (followingData) {
+      const updatedFollowing = {
+        ...followingData.following,
+        [streamId]: true,
+      };
+      // updates it to following
+      const { error: updateError } = await supabase
         .from('Following')
-        .select('following')
-        .eq('uuid', profileData.id)
-        .single();
+        .update({ following: updatedFollowing })
+        .eq('uuid', uid);
 
-      if (followingData) {
-        const updatedFollowing = {
-          ...followingData.following,
-          [streamId]: true,
-        };
+      const { data: data, error } = await supabase
+        .from('Channel')
+        .update({
+          FollowersCount: followers + 1,
+        })
+        .eq('uuid', uid);
 
-        const { error: updateError } = await supabase
-          .from('Following')
-          .update({ following: updatedFollowing })
-          .eq('uuid', profileData.id);
-
-        if (updateError) {
-          throw updateError;
-        }
-
-        res.status(200).json(true);
-      } else {
-        res.status(404).json({ message: 'Following data not found' });
+      if (updateError) {
+        throw updateError;
       }
+
+      res.status(200).json(true);
     } else {
-      // a guest. So we are going to return false and eventually make user login
-      res.status(200).json(false);
+      res.status(404).json({ message: 'Following data not found' });
     }
   } catch (error) {
     console.error(error);
@@ -66,43 +63,38 @@ router.put('/addFollow', authenticateToken, async (req, res) => {
 router.put('/unFollow', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded;
-    const streamId = req.body.username; // the stream's id
+    const uid = req.body.decodedUID;
+    const streamId = req.body.username; // the streams id
+    const followers = req.body.followers;
 
-    // getting profile for uuid
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id')
-      .eq('email', email)
+    // if uuid exists, gets that users following table
+    const { data: followingData, error: followingError } = await supabase
+      .from('Following')
+      .select('following')
+      .eq('uuid', uid)
       .single();
 
-    if (profileData) {
-      // if uuid exists
-      const { data: followingData, error: followingError } = await supabase
+    if (followingData) {
+      const updatedFollowing = { ...followingData.following };
+      delete updatedFollowing[streamId]; // Remove the streamId from the following object
+
+      const { error: updateError } = await supabase
         .from('Following')
-        .select('following')
-        .eq('uuid', profileData.id)
-        .single();
+        .update({ following: updatedFollowing })
+        .eq('uuid', uid);
 
-      if (followingData) {
-        const updatedFollowing = { ...followingData.following };
-        delete updatedFollowing[streamId]; // Remove the streamId from the following object
+      const { data: data, error } = await supabase
+        .from('Channel')
+        .update({
+          FollowersCount: followers - 1,
+        })
+        .eq('uuid', uid);
 
-        const { error: updateError } = await supabase
-          .from('Following')
-          .update({ following: updatedFollowing })
-          .eq('uuid', profileData.id);
-
-        if (updateError) {
-          throw updateError;
-        }
-
-        res.status(200).json(true);
-      } else {
-        res.status(404).json({ message: 'Following data not found' });
+      if (updateError) {
+        throw updateError;
       }
-    } else {
-      // a guest. So we are going to return false and eventually make user login
-      res.status(200).json(false);
+
+      res.status(200).json(true);
     }
   } catch (error) {
     console.error(error);
@@ -113,35 +105,26 @@ router.put('/unFollow', authenticateToken, async (req, res) => {
 router.put('/checkFollowing', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded;
+    const uid = req.body.decodedUID;
     const streamId = req.body.username; // the stream's id
 
     // getting profile for uuid
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id')
-      .eq('email', email)
+
+    // if uuid exists
+    const { data: followingData, error: followingError } = await supabase
+      .from('Following')
+      .select('following')
+      .eq('uuid', uid)
       .single();
 
-    if (profileData) {
-      // if uuid exists
-      const { data: followingData, error: followingError } = await supabase
-        .from('Following')
-        .select('following')
-        .eq('uuid', profileData.id)
-        .single();
-
-      if (followingData) {
-        if (followingData.following[streamId]) {
-          res.status(200).json(true);
-        } else {
-          res.status(200).json(false);
-        }
+    if (followingData) {
+      if (followingData.following[streamId]) {
+        res.status(200).json(true);
       } else {
-        res.status(404).json({ message: 'Following data not found' });
+        res.status(200).json(false);
       }
     } else {
-      // a guest. So we are going to return false and eventually make user login
-      res.status(200).json(false);
+      res.status(404).json({ message: 'Following data not found' });
     }
   } catch (error) {
     console.error(error);
@@ -152,23 +135,13 @@ router.put('/checkFollowing', authenticateToken, async (req, res) => {
 router.put('/getFollowingList', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded;
-
-    // getting profile for uuid
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id')
-      .eq('email', email)
-      .single();
-
-    if (profileError) {
-      throw profileError;
-    }
+    const uid = req.body.decodedUID;
 
     if (profileData) {
       const { data: followingData, error: followingError } = await supabase
         .from('Following')
         .select('following')
-        .eq('uuid', profileData.id)
+        .eq('uuid', uid)
         .single();
 
       if (followingError) {

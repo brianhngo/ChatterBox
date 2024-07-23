@@ -14,7 +14,8 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 router.use(cors());
 const sendEmail = require('./sendEmail');
-// PUT /api/channel/getUserInformation
+
+// PUT /api/channel/getUserInformation !!
 
 router.put('/getUserInformation', async (req, res) => {
   try {
@@ -59,7 +60,7 @@ router.put('/getUserInformation', async (req, res) => {
   }
 });
 
-// api/channel/previews
+// api/channel/previews !!
 router.put('/previews', async (req, res) => {
   try {
     // getting 4 active channels
@@ -83,11 +84,12 @@ router.put('/previews', async (req, res) => {
 
 // api/channel/goLive
 
-// api/channel/goLive
+// api/channel/goLive!!
 
 router.put('/goLive', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded; // from authenticateToken
+    const uid = req.body.decodedUID;
 
     // Fetch profile to get UUID
     const { data: profileData, error: profileError } = await supabase
@@ -115,72 +117,90 @@ router.put('/goLive', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
+// puts status into Offline!!
 router.put('/goOffline', authenticateToken, async (req, res) => {
   try {
     const email = req.body.decoded; // from authenticateToken
-
-    // Fetch profile to get UUID
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id, username')
-      .eq('email', email)
-      .single();
-
-    if (profileError || !profileData) {
-      res.status(404).json({ message: 'Profile not found' });
-      return;
-    }
-
-    const profileUUID = profileData.id;
+    const uid = req.body.decodedUID;
 
     // Update channel status to false using profile UUID
-    await supabase
-      .from('Channel')
-      .update({ Status: false })
-      .eq('uuid', profileUUID);
+    await supabase.from('Channel').update({ Status: false }).eq('uuid', uid);
 
-    res.status(200).json({ username: profileData.username });
+    res.status(200).json({ uid: uid });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
+// Checks Streaming Status (Offline/Online), // If You are own your own channel!!
 router.put('/checkStatus', authenticateToken, async (req, res) => {
   try {
-    const email = req.body.decoded; // from authenticateToken
-
-    // Fetch profile to get UUID
+    const { token, streamsId, decoded, decodedUID } = req.body;
+    console.log(streamsId);
     const { data: profileData, error: profileError } = await supabase
       .from('Profile')
-      .select('id, username')
-      .eq('email', email)
+      .select('*')
+      .eq('id', decodedUID)
       .single();
 
-    if (profileError || !profileData) {
-      res.status(404).json({ message: 'Profile not found' });
-      return;
-    }
+    if (profileData) {
+      if (streamsId === profileData.username) {
+        // its the users own channel
 
-    const profileUUID = profileData.id;
+        const { data: channelData, error: channelError } = await supabase
+          .from('Channel')
+          .select('Status')
+          .eq('uuid', decodedUID)
+          .single();
 
-    // Check channel status using profile UUID
-    const { data: channelData, error: channelError } = await supabase
-      .from('Channel')
-      .select('Status')
-      .eq('uuid', profileUUID)
-      .single();
-
-    if (channelError || !channelData) {
-      res.status(404).json({ message: 'Channel status not found' });
-      return;
-    }
-
-    if (channelData.Status) {
-      res.status(200).json(true);
+        if (channelData.Status) {
+          //  Users Own Stream and is Streaming
+          res.status(200).json({
+            statusLive: true,
+            hosting: true,
+          });
+        } else {
+          res.status(200).json({
+            statusLive: false,
+            hosting: true,
+          });
+        }
+      }
     } else {
-      res.status(200).json(false);
+      // its not the users own channel
+
+      // gets the id from Profile DB
+      const { data: userData, error: userError } = await supabase
+        .from('Profile')
+        .select('id')
+        .eq('username', streamsId)
+        .single();
+
+      if (userData) {
+        console.log(userData, streamsId);
+        // if the data exists
+        const { data: channelData, error: channelError } = await supabase
+          .from('Channel')
+          .select('Status')
+          .eq('uuid', userData.id)
+          .single();
+
+        if (channelData.Status) {
+          //  Not Users Own Stream and is Streaming
+          res.status(200).json({
+            statusLive: true,
+            hosting: false,
+          });
+        } else {
+          res.status(200).json({
+            // Not users Own Stream and is not streaming
+            statusLive: false,
+            hosting: false,
+          });
+        }
+      } else {
+        throw 'Error';
+      }
     }
   } catch (error) {
     console.error(error);
