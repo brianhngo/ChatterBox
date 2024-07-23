@@ -32,29 +32,54 @@ export const messages = [
 ];
 
 const emojiMap = {
-  catjam: 'catjam.png',
-  kekw: 'kekw.png',
-  ez: 'ez.png',
-  monkas: 'monkas.png',
+  catjam: '/emotes/catJam.webp',
+  kekw: '/emotes/KEKW.webp',
+  ez: '/emotes/EZ.webp',
+  monkas: '/emotes/monkas.webp',
 };
 
-export const renderMessageWithEmojis = (message: string) => {
-  return message.split(':').map((part, index) => {
-    if (index % 2 === 1) {
-      const imageSrc = emojiMap[part];
-      if (imageSrc) {
+// Replace Emojis in the chatbody
+export const replaceShortcutsWithEmojis = (message) => {
+  const words = message.split(' ');
+  return words.map((word, index) => {
+    // Search for theinstance of ':'. Then remove it and look for the matching emoji via map
+    const cleanWord = word.replace(/:/g, '');
+    if (emojiMap[cleanWord]) {
+      return (
+        <img
+          key={index}
+          src={emojiMap[cleanWord]}
+          alt={cleanWord}
+          className="inline-block"
+          style={{ width: '20px', height: '20px' }}
+        />
+      );
+    }
+    // if its not return the word
+    return <span key={index}>{word} </span>;
+  });
+};
+
+// Replace Emojis in the Input Text Area
+export const replaceShortcutsWithEmojisInput = (message) => {
+  const words = message.split(' ');
+  return words
+    .map((word, index) => {
+      const cleanWord = word.replace(/:/g, ''); // searches for ":"
+      if (emojiMap[cleanWord]) {
         return (
           <img
             key={index}
-            src={`path_to_images/${imageSrc}`}
-            alt={part}
+            src={emojiMap[cleanWord]}
+            alt={cleanWord}
             className="inline-block"
+            style={{ width: '20px', height: '20px' }}
           />
         );
       }
 
-      return <span key={index}>:{part}:</span>;
-    }
-    return <span key={index}>{part}</span>;
-  });
+      // tryutnd word if it doesnt exist
+      return word + ' ';
+    })
+    .join('');
 };
