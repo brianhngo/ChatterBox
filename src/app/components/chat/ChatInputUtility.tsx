@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // This will contain functions + classes that are defined here and exported
 
 //  Trie Data structure to store 3 triggers (@, /, :, text),
@@ -98,38 +100,160 @@ interface Command {
 
 const commands: Command[] = [
   {
-    name: '/block',
-    description: 'Block a user from interacting with you on Twitch',
+    name: '/setAdmin',
+    description: '/setAdmin @username - Set user as admin',
   },
   {
-    name: '/unblock',
-    description: 'Remove user from your block list',
+    name: '/unsetAdmin',
+    description: '/unsetAdmin @username - Remove user as admin',
   },
   {
-    name: '/color',
-    description: 'Change your username color, i.e. blue, green, etc',
+    name: '/mute',
+    description: '/mute @username - Muted user',
   },
   {
-    name: '/gift',
-    description: 'Gift a specified number of Subs to the community',
+    name: '/unmute',
+    description: '/unmute @username - unmuted user',
   },
   {
-    name: '/help',
-    description: 'Get detailed information on using a chat command',
+    name: '/ban',
+    description: '/ban @username - bans a user',
   },
   {
-    name: '/mods',
-    description: 'Display a list of moderators for this channel',
+    name: '/unban',
+    description: '/unban @username - unbans a user',
   },
   {
-    name: '/vips',
-    description: 'Display a list of VIPs for this channel',
+    name: '/suspend',
+    description: '/suspend @username - suspends a user',
   },
   {
-    name: '/vote',
-    description: 'Vote in the active poll on the given channel',
+    name: '/unsuspend',
+    description: '/unsuspend @username - unsuspend a user',
+  },
+  {
+    name: '/settitle',
+    description: '/settitle @Text - Update Channel Title',
+  },
+  {
+    name: '/setdescription',
+    description: '/setdescription @Text - Update Channel Description',
   },
 ];
+
+export async function commandSwitchCase(command, information, streamId) {
+  try {
+    let response;
+    console.log(command, information);
+    switch (command) {
+      case '/setadmin':
+        response = await axios.put('http://localhost:3001/api/chat/setAdmin', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+        break;
+
+      case '/unsetadmin':
+        response = await axios.put(
+          'http://localhost:3001/api/chat/removeAdmin',
+          {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          }
+        );
+
+        break;
+
+      case '/mute':
+        response = await axios.put('http://localhost:3001/api/chat/muteUser', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+
+        break;
+
+      case '/unmute':
+        response = await axios.put(
+          'http://localhost:3001/api/chat/unmuteUser',
+          {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          }
+        );
+
+        break;
+
+      case '/ban':
+        response = await axios.put('http://localhost:3001/api/chat/banUser', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+
+        break;
+
+      case '/unban':
+        response = await axios.put('http://localhost:3001/api/chat/unbanUser', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+
+        break;
+
+      case '/suspend':
+        response = await axios.put('http://localhost:3001/api/chat/suspend', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+        break;
+
+      case '/unsuspend':
+        response = await axios.put('http://localhost:3001/api/chat/unsuspend', {
+          token: window.localStorage.getItem('token'),
+          selectedUser: information,
+          streamsId: streamId,
+        });
+
+        break;
+
+      case '/settitle':
+        response = await axios.put(
+          'http://localhost:3001/api/chat/updateTitle',
+          {
+            token: window.localStorage.getItem('token'),
+            text: information,
+            streamsId: streamId,
+          }
+        );
+
+        break;
+      case '/setdescription':
+        response = await axios.put(
+          'http://localhost:3001/api/chat/updateDescription',
+          {
+            token: window.localStorage.getItem('token'),
+            text: information,
+            streamsId: streamId,
+          }
+        );
+        break;
+      default:
+        alert('Error');
+        break;
+    }
+    if (response && response.data) {
+      console.log('successful');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 interface Emote {
   name: string;

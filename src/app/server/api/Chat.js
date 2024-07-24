@@ -7,6 +7,7 @@ dotenv.config();
 const authenticateToken = require('./ProfileMiddleware');
 const isSuperAdminOrHost = require('./ChatMiddleware');
 const cors = require('cors');
+const { profile } = require('console');
 router.use(cors());
 
 // this page will be responsible for Chat commands routing
@@ -19,7 +20,7 @@ router.use(cors());
 // 1A. First Check Token. If Token matches => User is logged in
 // 2A. Check if the admin is on their own page as admin.
 // 3A. Then set a user as admin
-
+// !!
 router.put(
   '/setAdmin',
   authenticateToken,
@@ -31,20 +32,27 @@ router.put(
       if (role === 'superadmin' || role === 'host') {
         // set channels profile and add to admin streamsId
         // get selectedUsers Info
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
+
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('adminUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
 
         if (channelInfo) {
           channelInfo.adminUsers[selectedUser] = true;
+
           await supabase
             .from('Channel')
             .update({
               adminUsers: channelInfo.adminUsers,
             })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
 
           res.status(200).json(true);
         }
@@ -58,7 +66,7 @@ router.put(
 );
 
 // PUT http://localhost:3001/api/chat/removeAdmin
-
+//!!
 router.put(
   '/removeAdmin',
   authenticateToken,
@@ -70,20 +78,26 @@ router.put(
       if (role === 'superadmin' || role === 'host') {
         // set channels profile and add to admin streamsId
         // get selectedUsers Info
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
+
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('adminUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
 
         if (channelInfo) {
-          delete channelInfo.adminUsers[userIdToSetAdmin];
+          delete channelInfo.adminUsers[selectedUser];
           await supabase
             .from('Channel')
             .update({
               adminUsers: channelInfo.adminUsers,
             })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
 
           res.status(200).json(true);
         }
@@ -97,6 +111,7 @@ router.put(
 );
 
 // PUT http://localhost:3001/api/chat/muteUser
+// !!
 
 router.put(
   '/muteUser',
@@ -107,11 +122,16 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('mutedUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
         if (channelInfo) {
           channelInfo.mutedUsers[selectedUser] = true;
@@ -120,43 +140,7 @@ router.put(
             .update({
               mutedUsers: channelInfo.mutedUsers,
             })
-            .eq('uuid', streamsId);
-          res.status(200).json(true);
-        }
-      } else {
-        res.status(404).json(false);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-);
-
-// localhost:3001/api/chat/muteUser
-
-router.put(
-  '/muteUser',
-  authenticateToken,
-  isSuperAdminOrHost,
-  async (req, res) => {
-    try {
-      const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
-
-      if (role === 'superadmin' || role === 'host' || role === 'admin') {
-        // 3 cases where you can mute
-        const { data: channelInfo, error: channelError } = await supabase
-          .from('Channel')
-          .select('mutedUsers')
-          .eq('uuid', streamsId)
-          .single();
-        if (channelInfo) {
-          channelInfo.mutedUsers[selectedUser] = true;
-          await supabase
-            .from('Channel')
-            .update({
-              mutedUsers: channelInfo.mutedUsers,
-            })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
           res.status(200).json(true);
         }
       } else {
@@ -169,7 +153,7 @@ router.put(
 );
 
 // unmuting user
-// localhost:3001/api/chat/unmuteUser
+// localhost:3001/api/chat/unmuteUser !!
 router.put(
   '/unmuteUser',
   authenticateToken,
@@ -179,11 +163,16 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('mutedUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
         if (channelInfo) {
           delete channelInfo.mutedUsers[selectedUser];
@@ -192,7 +181,7 @@ router.put(
             .update({
               mutedUsers: channelInfo.mutedUsers,
             })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
           res.status(200).json(true);
         }
       } else {
@@ -205,7 +194,7 @@ router.put(
 );
 
 // ban user
-// localhost:3001/api/chat/banUser
+// localhost:3001/api/chat/banUser !!
 
 router.put(
   '/banUser',
@@ -216,11 +205,16 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('bannedUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
         if (channelInfo) {
           channelInfo.bannedUsers[selectedUser] = true;
@@ -229,7 +223,7 @@ router.put(
             .update({
               bannedUsers: channelInfo.bannedUsers,
             })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
           res.status(200).json(true);
         }
       } else {
@@ -253,11 +247,17 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
+
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .select('bannedUsers')
-          .eq('uuid', streamsId)
+          .eq('uuid', profileData.id)
           .single();
         if (channelInfo) {
           delete channelInfo.bannedUsers[selectedUser];
@@ -266,7 +266,7 @@ router.put(
             .update({
               bannedUsers: channelInfo.bannedUsers,
             })
-            .eq('uuid', streamsId);
+            .eq('uuid', profileData.id);
           res.status(200).json(true);
         }
       } else {
@@ -290,18 +290,20 @@ router.put(
         req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .update({
             Title: text,
           })
-          .eq('uuid', streamsId);
-        if (channelInfo) {
-          res.status(200).json(true);
-        } else {
-          res.status(404).json(false);
-        }
+          .eq('uuid', profileData.id);
+
+        res.status(200).json(true);
       } else {
         res.status(404).json(false);
       }
@@ -321,18 +323,20 @@ router.put(
         req.body;
 
       if (role === 'superadmin' || role === 'host' || role === 'admin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .update({
             Description: text,
           })
-          .eq('uuid', streamsId);
-        if (channelInfo) {
-          res.status(200).json(true);
-        } else {
-          res.status(404).json(false);
-        }
+          .eq('uuid', profileData.id);
+
+        res.status(200).json(true);
       } else {
         res.status(404).json(false);
       }
@@ -353,6 +357,11 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
@@ -360,12 +369,9 @@ router.put(
             Status: false,
             IsSuspended: true,
           })
-          .eq('uuid', streamsId);
-        if (channelInfo) {
-          res.status(200).json(true);
-        } else {
-          res.status(404).json(false);
-        }
+          .eq('uuid', profileData.id);
+
+        res.status(200).json(true);
       } else {
         res.status(404).json(false);
       }
@@ -384,18 +390,20 @@ router.put(
       const { role, decodedUID, streamsId, decoded, selectedUser } = req.body;
 
       if (role === 'superadmin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
         // 3 cases where you can mute
         const { data: channelInfo, error: channelError } = await supabase
           .from('Channel')
           .update({
             IsSuspended: false,
           })
-          .eq('uuid', streamsId);
-        if (channelInfo) {
-          res.status(200).json(true);
-        } else {
-          res.status(404).json(false);
-        }
+          .eq('uuid', profileData.id);
+
+        res.status(200).json(true);
       } else {
         res.status(404).json(false);
       }

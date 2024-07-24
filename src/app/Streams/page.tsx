@@ -4,13 +4,12 @@ import { useRouter } from 'next/navigation';
 
 export default function StreamsList() {
   const router = useRouter();
-  const id = 1;
 
   // Click handler function
   const handleClick = (username: string) => {
-    console.log(`Navigating to /Streams/${id}`);
+    console.log(`Navigating to /Streams/${username}`);
     // Navigate to /streams/:id when div box is clicked
-    router.push(`/Streams/${id}`);
+    router.push(`/Streams/${username}`);
   };
 
   const channels = [

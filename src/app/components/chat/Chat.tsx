@@ -12,7 +12,7 @@ interface Message {
   message: string;
 }
 
-export default function Chat() {
+export default function Chat({ streamId }) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [inputValue, setInputValue] = useState<string>('');
@@ -39,6 +39,7 @@ export default function Chat() {
       {/* Input for chat */}
       <section className="p-4 w-full border-b border-t border-black border-opacity-100">
         <ChatInput
+          streamId={streamId}
           addMessage={addMessage}
           inputValue={inputValue}
           setInputValue={setInputValue}

@@ -15,14 +15,14 @@ export default function AutoSuggest({
   return isFocused === true ? (
     <div className="relative">
       {display.length > 0 && (
-        <div className="absolute text-gray-800 w-full bottom-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+        <div className="absolute max-h-60 overflow-y-auto text-gray-800 w-full bottom-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
           {display.map((element, index) => (
             <div
               className={`${
                 indicator === ':'
                   ? 'flex flex-row gap-1'
                   : 'flex flex-col gap-1'
-              } hover:bg-gray-100 text-gray-800 z-10 p-2`}
+              } hover:bg-gray-100 text-gray-800 z-10 p-2 cursor-pointer`}
               key={index}
               onClick={() => onClickHandler(element[0])}>
               {indicator === ':' && element[1] ? (

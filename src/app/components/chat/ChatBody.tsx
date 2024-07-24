@@ -73,7 +73,7 @@ export default function ChatBody({ messages }) {
   return (
     <div
       ref={chatContainerRef}
-      className="chat-body bg-gray-200 p-3 rounded-lg h-full max-h-96 overflow-y-auto shadow-md">
+      className="chat-body bg-gray-200 p-3 rounded-lg h-full  overflow-y-auto shadow-md">
       {messages.map((element, index) => (
         <p className="text-sm font-medium text-gray-600 p-2" key={index}>
           <span className="font-bold">{element.username}</span>:{' '}

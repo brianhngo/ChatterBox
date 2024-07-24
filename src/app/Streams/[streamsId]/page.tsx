@@ -150,7 +150,7 @@ export default function StreamsDetails({ params }: Params) {
           />
         </div>
         <div className="w-2/5">
-          <Chat />
+          <Chat streamId={params.streamsId} />
         </div>
       </div>
       <div className="flex flex-col w-full">

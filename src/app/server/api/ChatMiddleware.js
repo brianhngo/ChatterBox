@@ -33,7 +33,8 @@ async function isSuperAdminOrHost(req, res, next) {
           const { data: channelData, error: channelError } = await supabase
             .from('Channel')
             .select('adminUsers')
-            .eq('uuid', decodedUID);
+            .eq('uuid', decodedUID)
+            .single();
 
           if (channelData) {
             if (channelData.adminUsers[profileData.username]) {

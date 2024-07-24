@@ -1,15 +1,18 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import { chatTrie, Trie } from './ChatInputUtility';
+import React, { useState, useEffect } from 'react';
+import { chatTrie, commandSwitchCase, Trie } from './ChatInputUtility';
 import AutoSuggest from './AutoSuggest';
-import Footer from './Footer';
-import { messages } from './ChatBodyUtility';
+
 import io from 'socket.io-client';
-import { replaceShortcutsWithEmojisInput } from './ChatBodyUtility';
 
 const socket = io('http://localhost:3001');
 
-export default function ChatInput({ inputValue, setInputValue, addMessage }) {
+export default function ChatInput({
+  inputValue,
+  setInputValue,
+  addMessage,
+  streamId,
+}) {
   // This will contain the chats input
   // const [inputValue, setInputValue] = useState<string>(''); // user input
   const [chatTrieState, setChatTrieState] = useState<Trie | null>(null); // storing trie Data
@@ -28,11 +31,19 @@ export default function ChatInput({ inputValue, setInputValue, addMessage }) {
   };
 
   const submitHandler = (newMessage: string) => {
-    addMessage(newMessage);
-    if (newMessage) {
-      socket.emit('send_message', { message: newMessage });
+    //  i need to check if it begins with /
+    if (newMessage[0] === '/') {
+      let commandIndex = newMessage.indexOf(' ');
+      let command = newMessage.slice(0, commandIndex);
+      let information = newMessage.slice(commandIndex + 2);
+      commandSwitchCase(command, information, streamId);
+    } else {
+      addMessage(newMessage);
+      if (newMessage) {
+        socket.emit('send_message', { message: newMessage });
+      }
+      setInputValue('');
     }
-    setInputValue('');
   };
 
   const filter = (word: string) => {
