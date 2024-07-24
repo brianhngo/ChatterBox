@@ -13,7 +13,7 @@ export default function AutoSuggest({
   isFocused: boolean;
 }) {
   return isFocused === true ? (
-    <div className="relative mb-3">
+    <div className="relative">
       {display.length > 0 && (
         <div className="absolute text-gray-800 w-full bottom-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
           {display.map((element, index) => (

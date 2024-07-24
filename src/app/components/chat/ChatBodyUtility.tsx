@@ -1,36 +1,5 @@
 // this is will be to store any utility functions for ChatBody.tsx
 
-export const messages = [
-  {
-    username: 'Username',
-    message:
-      'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-  },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-  {
-    username: 'Username',
-    message:
-      'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-  },
-  {
-    username: 'Username',
-    message:
-      'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-  },
-  {
-    username: 'Username',
-    message:
-      'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-  },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-  { username: 'Username', message: 'Very Nice Content!' },
-];
-
 const emojiMap = {
   catjam: '/emotes/catJam.webp',
   kekw: '/emotes/KEKW.webp',
@@ -40,10 +9,19 @@ const emojiMap = {
 
 // Replace Emojis in the chatbody
 export const replaceShortcutsWithEmojis = (message) => {
+  // Ensure the message is a string
+  if (typeof message !== 'string') {
+    // Optionally, handle the case where message is not a string
+    return <span>Invalid message format</span>;
+  }
+
+  // Split the message into words and replace shortcuts with emojis
   const words = message.split(' ');
   return words.map((word, index) => {
-    // Search for theinstance of ':'. Then remove it and look for the matching emoji via map
+    // Remove leading and trailing colons
     const cleanWord = word.replace(/:/g, '');
+
+    // Check if cleanWord matches any emoji
     if (emojiMap[cleanWord]) {
       return (
         <img
@@ -55,31 +33,8 @@ export const replaceShortcutsWithEmojis = (message) => {
         />
       );
     }
-    // if its not return the word
+
+    // If no match, return the word as a span
     return <span key={index}>{word} </span>;
   });
-};
-
-// Replace Emojis in the Input Text Area
-export const replaceShortcutsWithEmojisInput = (message) => {
-  const words = message.split(' ');
-  return words
-    .map((word, index) => {
-      const cleanWord = word.replace(/:/g, ''); // searches for ":"
-      if (emojiMap[cleanWord]) {
-        return (
-          <img
-            key={index}
-            src={emojiMap[cleanWord]}
-            alt={cleanWord}
-            className="inline-block"
-            style={{ width: '20px', height: '20px' }}
-          />
-        );
-      }
-
-      // tryutnd word if it doesnt exist
-      return word + ' ';
-    })
-    .join('');
 };

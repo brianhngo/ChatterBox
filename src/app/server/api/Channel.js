@@ -111,7 +111,41 @@ router.put('/goLive', authenticateToken, async (req, res) => {
       .update({ Status: true })
       .eq('uuid', profileUUID);
 
-    res.status(200).json({ username: profileData.username });
+    // getting all the  accounts name and then matching it with their profile data
+    const { data: FollowersData, error: FollowersError } = await supabase
+      .from('Following')
+      .select('following, uuid');
+
+    let index = email.indexOf('@');
+    let username = email.slice(0, index);
+
+    if (FollowersData) {
+      const filteredEntries = FollowersData.filter((entry) => {
+        const followersJson = entry.following;
+
+        return followersJson && Object.keys(followersJson).includes(username);
+      });
+
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('Profile')
+        .select('email')
+        .in(
+          'id',
+          filteredEntries.map((element, key) => element.uuid)
+        );
+
+      if (profilesData) {
+        profilesData.forEach((profile) => {
+          sendEmail(
+            profile.email,
+            'Now Live on Chatterbox',
+            profileData.username
+          ); // Assuming you have profile.username
+        });
+
+        res.status(200).json({ username: profileData.username });
+      }
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });

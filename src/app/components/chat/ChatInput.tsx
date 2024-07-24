@@ -7,21 +7,14 @@ import { messages } from './ChatBodyUtility';
 import io from 'socket.io-client';
 import { replaceShortcutsWithEmojisInput } from './ChatBodyUtility';
 
-export default function ChatInput({
-  inputValue,
-  setInputValue,
+const socket = io('http://localhost:3001');
 
-  addMessage,
-}) {
+export default function ChatInput({ inputValue, setInputValue, addMessage }) {
   // This will contain the chats input
   // const [inputValue, setInputValue] = useState<string>(''); // user input
   const [chatTrieState, setChatTrieState] = useState<Trie | null>(null); // storing trie Data
   const [display, setDisplay] = useState<string[]>([]); // suggested display
   const [isFocused, setIsFocused] = useState(true); // T/F on when user clicks out of input box. (True => suggested appear, False => suggested disappears , user clicks off Input)
-
-  const [socket, setSocket] = useState(null);
-
-  const socketRef = useRef(null);
 
   // handles input changes
   const inputValueHandler = (event: any) => {
@@ -35,10 +28,10 @@ export default function ChatInput({
   };
 
   const submitHandler = (newMessage: string) => {
-    addMessage(inputValue);
-    // if (inputValue){
-    //   socket.emit('chat message', inputValue);
-    // }
+    addMessage(newMessage);
+    if (newMessage) {
+      socket.emit('send_message', { message: newMessage });
+    }
     setInputValue('');
   };
 
@@ -74,18 +67,36 @@ export default function ChatInput({
     setChatTrieState(chatTrie);
   }, []);
 
+  const useSocket = (socket, addMessage) => {
+    useEffect(() => {
+      // Define the callback function
+      const handleMessage = (data) => {
+        addMessage(data.message);
+      };
+
+      // Add the event listener
+      socket.on('receive_message', handleMessage);
+
+      // Cleanup function to remove the event listener
+      return () => {
+        socket.off('receive_message', handleMessage);
+      };
+    }, [socket, addMessage]); // Add 'addMessage' as a dependency if it's defined outside this effect
+  };
+
+  useSocket(socket, addMessage);
+
   return (
     <>
       <div className="flex flex-col">
-        <div>
-          <AutoSuggest
-            display={display}
-            indicator={inputValue.length > 0 ? inputValue[0] : ''}
-            onClickHandler={onClickHandler}
-            isFocused={isFocused}
-          />
-        </div>
-        <div className="flex p-2 flex-row  w-full justify-between items-center mx-auto my-auto rounded-lg  border-2 border-gray-700  focus-within:border-purple-500">
+        <AutoSuggest
+          display={display}
+          indicator={inputValue.length > 0 ? inputValue[0] : ''}
+          onClickHandler={onClickHandler}
+          isFocused={isFocused}
+        />
+
+        <div className="flex p-2 flex-row  w-full justify-between items-center  rounded-lg  border-2 border-gray-700  focus-within:border-purple-500">
           {/* Left Side will contain Star & Input */}
           <div className="flex items-center flex-grow mr-1">
             <svg

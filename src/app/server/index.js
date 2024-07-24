@@ -32,18 +32,17 @@ const server = app.listen(port, () => {
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
-    // methods: ['GET', 'POST'],
-    // allowedHeaders: ['Content-Type'],
+    methods: ['GET', 'POST'],
+
     credentials: true,
   },
 });
 
 io.on('connection', (socket) => {
-  // console.log('A user connected');
+  console.log(`A user connected ${socket.id}`);
 
-  socket.on('chat message', (msg) => {
-    // console.log('Message received:', msg);
-    io.emit('chat message', msg);
+  socket.on('send_message', (msg) => {
+    socket.broadcast.emit('receive_message', msg);
   });
 
   socket.on('disconnect', () => {

@@ -7,53 +7,32 @@ import ChatInput from './ChatInput';
 import Footer from './Footer';
 import Link from 'next/link';
 
+interface Message {
+  username: string;
+  message: string;
+}
+
 export default function Chat() {
-  const [messages, setMessages] = useState([
-    {
-      username: 'Username',
-      message:
-        'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-    },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-    {
-      username: 'Username',
-      message:
-        'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-    },
-    {
-      username: 'Username',
-      message:
-        'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-    },
-    {
-      username: 'Username',
-      message:
-        'Very Nice Content! I hope you have a terrific weekend. and hopefully we shall meet again',
-    },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-    { username: 'Username', message: 'Very Nice Content!' },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const [inputValue, setInputValue] = useState<string>('');
 
   const addMessage = (newMessage: string) => {
-    setMessages([...messages, { username: 'user1', message: newMessage }]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { username: 'user1', message: newMessage },
+    ]);
   };
 
   return (
-    <div className="border border-black 2xl:w-[40vw] w-[55vw] 2xl:h-[100%] h-full mx-auto flex flex-col justify-center items-center">
+    <div className="border border-black 2xl:w-[40vw] w-[55vw] 2xl:h-[100%] h-full mx-auto flex flex-col justify-none items-center">
       {/* Header Section */}
       <header className=" p-2 w-full border-b border-black border-opacity-100">
         <Header />
       </header>
 
       {/* Chat messages */}
-      <section className="overflow-y-auto p-4 w-full">
+      <section className="overflow-y-auto p-4 h-full w-full">
         <ChatBody messages={messages} />
       </section>
 
