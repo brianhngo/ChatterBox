@@ -170,7 +170,7 @@ router.put('/goOffline', authenticateToken, async (req, res) => {
 router.put('/checkStatus', authenticateToken, async (req, res) => {
   try {
     const { token, streamsId, decoded, decodedUID } = req.body;
-    console.log(streamsId);
+
     const { data: profileData, error: profileError } = await supabase
       .from('Profile')
       .select('*')

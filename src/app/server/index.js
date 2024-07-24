@@ -8,8 +8,10 @@ const followingRouter = require('./api/Following');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 dotenv.config();
+const chatRouter = require('./api/Chat');
 
 const { Server } = require('socket.io');
+const { chat } = require('googleapis/build/src/apis/chat');
 
 const app = express();
 const port = process.env.PORT;
@@ -24,6 +26,7 @@ app.use(bodyParser.json());
 app.use('/api/profile', profileRouter);
 app.use('/api/channel', channelRouter);
 app.use('/api/following', followingRouter);
+app.use('/api/chat', chatRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
