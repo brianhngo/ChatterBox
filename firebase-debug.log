@@ -1,0 +1,164 @@
+[debug] [2024-07-25T17:06:47.050Z] ----------------------------------------------------------------------
+[debug] [2024-07-25T17:06:47.062Z] Command:       /usr/local/bin/node /usr/local/bin/firebase init hosting
+[debug] [2024-07-25T17:06:47.062Z] CLI Version:   13.14.1
+[debug] [2024-07-25T17:06:47.063Z] Platform:      darwin
+[debug] [2024-07-25T17:06:47.063Z] Node Version:  v20.11.0
+[debug] [2024-07-25T17:06:47.063Z] Time:          Thu Jul 25 2024 10:06:47 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-07-25T17:06:47.063Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-07-25T17:06:47.133Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-07-25T17:06:47.134Z] > authorizing via signed-in user (brianhngo@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/brianngo/Desktop/stonks-fsa
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-07-25T17:06:47.140Z] Using project from CLI flag: assessment-4c0bb
+[debug] [2024-07-25T17:06:47.143Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:06:47.893Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:06:47.893Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] i  Using project assessment-4c0bb (assessment) 
+[info] 
+=== Hosting Setup
+[debug] [2024-07-25T17:06:47.901Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:06:48.054Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:06:48.054Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2024-07-25T17:09:10.004Z] ----------------------------------------------------------------------
+[debug] [2024-07-25T17:09:10.008Z] Command:       /usr/local/bin/node /usr/local/bin/firebase init hosting
+[debug] [2024-07-25T17:09:10.009Z] CLI Version:   13.14.1
+[debug] [2024-07-25T17:09:10.009Z] Platform:      darwin
+[debug] [2024-07-25T17:09:10.009Z] Node Version:  v20.11.0
+[debug] [2024-07-25T17:09:10.009Z] Time:          Thu Jul 25 2024 10:09:10 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-07-25T17:09:10.009Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-07-25T17:09:10.079Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-07-25T17:09:10.080Z] > authorizing via signed-in user (brianhngo@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/brianngo/Desktop/stonks-fsa
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-07-25T17:09:10.083Z] Using project from CLI flag: assessment-4c0bb
+[debug] [2024-07-25T17:09:10.085Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:09:10.488Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:09:10.488Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] i  Using project assessment-4c0bb (assessment) 
+[info] 
+=== Hosting Setup
+[debug] [2024-07-25T17:09:10.497Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:09:10.626Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:09:10.626Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2024-07-25T17:09:42.740Z] ----------------------------------------------------------------------
+[debug] [2024-07-25T17:09:42.743Z] Command:       /usr/local/bin/node /usr/local/bin/firebase init hosting
+[debug] [2024-07-25T17:09:42.743Z] CLI Version:   13.14.1
+[debug] [2024-07-25T17:09:42.744Z] Platform:      darwin
+[debug] [2024-07-25T17:09:42.744Z] Node Version:  v20.11.0
+[debug] [2024-07-25T17:09:42.744Z] Time:          Thu Jul 25 2024 10:09:42 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-07-25T17:09:42.744Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-07-25T17:09:42.808Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-07-25T17:09:42.809Z] > authorizing via signed-in user (brianhngo@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/brianngo/Desktop/stonks-fsa
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2024-07-25T17:09:42.813Z] Using project from CLI flag: assessment-4c0bb
+[debug] [2024-07-25T17:09:42.815Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:09:43.230Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:09:43.230Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] i  Using project assessment-4c0bb (assessment) 
+[info] 
+=== Hosting Setup
+[debug] [2024-07-25T17:09:43.240Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb [none]
+[debug] [2024-07-25T17:09:43.401Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb 200
+[debug] [2024-07-25T17:09:43.402Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/assessment-4c0bb {"projectId":"assessment-4c0bb","projectNumber":"387692955705","displayName":"assessment","name":"projects/assessment-4c0bb","resources":{"hostingSite":"assessment-4c0bb","storageBucket":"assessment-4c0bb.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_2de17110-6de2-4a2b-9d3a-b648dd54b881"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[info] ✔  Wrote out/404.html 
+[debug] [2024-07-25T17:10:10.155Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/releases.json [none]
+[debug] [2024-07-25T17:10:10.379Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/releases.json 200
+[debug] [2024-07-25T17:10:10.379Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/releases.json {"current":{"version":"10.12.4","browserURL":"https://www.gstatic.com/firebasejs/10.12.4/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/10.12.4/firebase.tgz"},"live":{"version":"10.12","browserURL":"https://www.gstatic.com/firebasejs/live/10.12/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/live/10.12/firebase.tgz"},"components":{"analytics":"https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js","app":"https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js","app-check":"https://www.gstatic.com/firebasejs/10.12.4/firebase-app-check.js","auth":"https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js","auth/cordova":"https://www.gstatic.com/firebasejs/10.12.4/firebase-auth/cordova.js","auth/web-extension":"https://www.gstatic.com/firebasejs/10.12.4/firebase-auth/web-extension.js","functions":"https://www.gstatic.com/firebasejs/10.12.4/firebase-functions.js","firestore":"https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js","firestore/lite":"https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore/lite.js","installations":"https://www.gstatic.com/firebasejs/10.12.4/firebase-installations.js","storage":"https://www.gstatic.com/firebasejs/10.12.4/firebase-storage.js","performance":"https://www.gstatic.com/firebasejs/10.12.4/firebase-performance.js","remote-config":"https://www.gstatic.com/firebasejs/10.12.4/firebase-remote-config.js","messaging":"https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging.js","messaging/sw":"https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging/sw.js","database":"https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js","vertexai-preview":"https://www.gstatic.com/firebasejs/10.12.4/firebase-vertexai-preview.js","firestore.memory":"https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.memory.js"}}
+[info] ✔  Wrote out/index.html 
+[info] 
+[info] i  Detected a .git folder at /Users/brianngo/Desktop/stonks-fsa 
+[info] i  Authorizing with GitHub to upload your service account to a GitHub repository's secrets store. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://github.com/login/oauth/authorize?client_id=89cf50f02ac6aaed3484&state=603185179&redirect_uri=http%3A%2F%2Flocalhost%3A9005&scope=read%3Auser%20repo%20public_repo
+[info] 
+[info] Waiting for authentication...
+[debug] [2024-07-25T17:10:11.463Z] >>> [apiv2][query] POST https://github.com/login/oauth/access_token [none]
+[debug] [2024-07-25T17:10:11.463Z] >>> [apiv2][body] POST https://github.com/login/oauth/access_token [stream]
+[debug] [2024-07-25T17:10:12.541Z] <<< [apiv2][status] POST https://github.com/login/oauth/access_token 200
+[debug] [2024-07-25T17:10:12.541Z] <<< [apiv2][body] POST https://github.com/login/oauth/access_token {"access_token":"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","token_type":"bearer","scope":"read:user,repo"}
+[debug] [2024-07-25T17:10:12.625Z] >>> [apiv2][query] GET https://api.github.com/user [none]
+[debug] [2024-07-25T17:10:13.414Z] <<< [apiv2][status] GET https://api.github.com/user 200
+[debug] [2024-07-25T17:10:13.415Z] <<< [apiv2][body] GET https://api.github.com/user {"login":"brianhngo","id":100103783,"node_id":"U_kgDOBfd2Zw","avatar_url":"https://avatars.githubusercontent.com/u/100103783?v=4","gravatar_id":"","url":"https://api.github.com/users/brianhngo","html_url":"https://github.com/brianhngo","followers_url":"https://api.github.com/users/brianhngo/followers","following_url":"https://api.github.com/users/brianhngo/following{/other_user}","gists_url":"https://api.github.com/users/brianhngo/gists{/gist_id}","starred_url":"https://api.github.com/users/brianhngo/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/brianhngo/subscriptions","organizations_url":"https://api.github.com/users/brianhngo/orgs","repos_url":"https://api.github.com/users/brianhngo/repos","events_url":"https://api.github.com/users/brianhngo/events{/privacy}","received_events_url":"https://api.github.com/users/brianhngo/received_events","type":"User","site_admin":false,"name":"Brian Ngo","company":null,"blog":"","location":null,"email":null,"hireable":null,"bio":null,"twitter_username":null,"public_repos":23,"public_gists":0,"followers":0,"following":0,"created_at":"2022-02-21T01:42:44Z","updated_at":"2024-07-12T17:00:31Z","private_gists":0,"total_private_repos":53,"owned_private_repos":4,"disk_usage":99759,"collaborators":0,"two_factor_authentication":true,"plan":{"name":"free","space":976562499,"collaborators":0,"private_repos":10000}}
+[info] 
+[info] ✔  Success! Logged into GitHub as brianhngo 
+[info] 
