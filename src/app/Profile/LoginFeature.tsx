@@ -62,6 +62,7 @@ export default function LoginFeature() {
   const logout = async (event: any) => {
     event.preventDefault();
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     setHasToken(false);
     router.push('/');
   };

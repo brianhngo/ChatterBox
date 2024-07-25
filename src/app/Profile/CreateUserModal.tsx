@@ -88,7 +88,8 @@ export default function CreateUserModal({
           }
         );
 
-        localStorage.setItem('token', data);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
         handleSetHasToken(true);
         setErrorMessge1(false);
         setErrorMessge2(false);

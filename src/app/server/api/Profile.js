@@ -70,6 +70,7 @@ router.put('/loginuser', async (req, res) => {
           }
           // Success we return an object containing qrCodeUrl, secret, and status of completion
           res.json({
+            username: data[0].username,
             uid: data[0].id,
             status: true,
             qrCodeUrl: qrCodeUrl,
@@ -93,7 +94,7 @@ router.put('/loginuser', async (req, res) => {
 
 router.put('/verify2fa', async (req, res) => {
   try {
-    const { secret, token, email, uid } = req.body;
+    const { secret, token, email, uid, username } = req.body;
     // Verify the TOTP token
     let totp = new OTPAuth.TOTP({
       issuer: 'StonksAssignment',
@@ -113,7 +114,7 @@ router.put('/verify2fa', async (req, res) => {
         // jwt token
         expiresIn: '24h',
       });
-      res.json(token2);
+      res.json({ token: token2, username: username });
     } else {
       // token dont match. returning false
       res.status(401).json(false);
@@ -198,7 +199,7 @@ router.put('/createuser', async (req, res) => {
               expiresIn: '24h',
             }
           );
-          res.json(token);
+          res.json({ token: token, username: username });
         }
       }
     } else {
@@ -236,7 +237,9 @@ router.put('/googleLogin', async (req, res) => {
           expiresIn: '24h',
         }
       );
-      return res.status(200).json(token);
+      return res
+        .status(200)
+        .json({ token: token, username: existingUser.username });
     } else {
       // User does not exist, so insert into the database
       let index = email.indexOf('@'); // everything before '@' will be a username
@@ -288,7 +291,10 @@ router.put('/googleLogin', async (req, res) => {
             expiresIn: '24h',
           }
         );
-        return res.status(200).json(token);
+        return res.status(200).json({
+          token: token,
+          username: existingUser.username,
+        });
       }
     }
   } catch (error) {

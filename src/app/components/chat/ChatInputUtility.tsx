@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+// import { io } from 'socket.io-client';
+// const socket = io('http://localhost:3001')
 // This will contain functions + classes that are defined here and exported
 
 //  Trie Data structure to store 3 triggers (@, /, :, text),
@@ -152,6 +153,10 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
+
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
         break;
 
       case '/unsetadmin':
@@ -163,6 +168,9 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
 
         break;
 
@@ -172,6 +180,9 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
 
         break;
 
@@ -183,6 +194,9 @@ export async function commandSwitchCase(command, information, streamId) {
             selectedUser: information,
             streamsId: streamId,
           }
+          // if (response.data){
+          //   socket.emit('update_user', {})
+          // }
         );
 
         break;
@@ -193,7 +207,9 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
-
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
         break;
 
       case '/unban':
@@ -202,6 +218,9 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
 
         break;
 
@@ -212,6 +231,9 @@ export async function commandSwitchCase(command, information, streamId) {
           streamsId: streamId,
         });
         break;
+      // if (response.data){
+      //   socket.emit('update_user', {})
+      // }
 
       case '/unsuspend':
         response = await axios.put('http://localhost:3001/api/chat/unsuspend', {
@@ -219,6 +241,9 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
 
         break;
 
@@ -231,6 +256,9 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
 
         break;
       case '/setdescription':
@@ -242,13 +270,12 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
+        // if (response.data){
+        //   socket.emit('update_user', {})
+        // }
         break;
       default:
-        alert('Error');
         break;
-    }
-    if (response && response.data) {
-      console.log('successful');
     }
   } catch (error) {
     console.error(error);

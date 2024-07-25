@@ -25,6 +25,7 @@ export default function LoginModal({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [uid, setUid] = useState('');
+  const [username, setUsername] = useState('');
 
   // States for Non Google Login Users.
   const [is2FA, setIs2FA] = useState(false); // False - ON LOGIN PAGE
@@ -78,6 +79,7 @@ export default function LoginModal({
       if (data) {
         setIs2FA(true);
         // setting the states and passing it down to 2FAModal Component
+        setUsername(data.username);
         setStatus(data.status);
         setQrCodeUrl(data.qrCodeUrl);
         setSecret(data.secret);
@@ -119,8 +121,8 @@ export default function LoginModal({
           // 2FA tokens is valid, and indeed the correct user
 
           setIsCredentials(true);
-
-          localStorage.setItem('token', data);
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('token', data.token);
         }
       } else {
         throw 'Error';
@@ -152,8 +154,8 @@ export default function LoginModal({
             email: email,
           }
         );
-
-        localStorage.setItem('token', data);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('token', data.token);
         toggleModal();
         handleSetHasToken(true);
         errorMessageHandler(false);

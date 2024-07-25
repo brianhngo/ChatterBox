@@ -20,7 +20,10 @@ export default function Chat({ streamId }) {
   const addMessage = (newMessage: string) => {
     setMessages((prevMessages) => [
       ...prevMessages,
-      { username: 'user1', message: newMessage },
+      {
+        username: `${window.localStorage.getItem('username')}`,
+        message: newMessage,
+      },
     ]);
   };
 
@@ -32,7 +35,7 @@ export default function Chat({ streamId }) {
       </header>
 
       {/* Chat messages */}
-      <section className="overflow-y-auto p-4 h-full w-full">
+      <section className="overflow-y-auto p-4 h-96 w-full flex-grow">
         <ChatBody messages={messages} />
       </section>
 

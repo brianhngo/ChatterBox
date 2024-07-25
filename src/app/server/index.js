@@ -42,11 +42,45 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log(`A user connected ${socket.id}`);
-
   socket.on('send_message', (msg) => {
     socket.broadcast.emit('receive_message', msg);
   });
+
+  // socket.on('update_user_role', ({ user, role }) => {
+  //   io.emit('user_role_updated', { user, role });
+  // });
+
+  // socket.on('mute_user', ({ user }) => {
+  //   io.emit('user_muted', { user });
+  // });
+
+  // socket.on('unmute_user', ({ user }) => {
+  //   io.emit('user_unmuted', { user });
+  // });
+
+  // socket.on('ban_user', ({ user }) => {
+  //   io.emit('user_banned', { user });
+  // });
+
+  // socket.on('unban_user', ({ user }) => {
+  //   io.emit('user_unbanned', { user });
+  // });
+
+  // socket.on('suspend_channel', ({ streamId }) => {
+  //   io.emit('channel_suspended', { streamId });
+  // });
+
+  // socket.on('unsuspend_channel', ({ streamId }) => {
+  //   io.emit('channel_unsuspended', { streamId });
+  // });
+
+  // socket.on('update_title', ({ streamId, title }) => {
+  //   io.emit('title_updated', { streamId, title });
+  // });
+
+  // socket.on('update_description', ({ streamId, description }) => {
+  //   io.emit('description_updated', { streamId, description });
+  // });
 
   socket.on('disconnect', () => {
     // console.log('User disconnected');

@@ -92,8 +92,11 @@ export default function StreamsDetails({ params }: Params) {
         }
       );
       if (data) {
+        console.log(data);
         setGoOnlineStatus(data.statusLive);
         setHosting(data.hosting);
+      } else {
+        console.log('hello');
       }
     } catch (error) {
       console.error(error);

@@ -46,6 +46,12 @@ export default function ChatInput({
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      submitHandler(inputValue);
+    }
+  };
+
   const filter = (word: string) => {
     const lowerCaseWord = word.toLocaleLowerCase();
     const array = chatTrie.search(lowerCaseWord);
@@ -132,7 +138,8 @@ export default function ChatInput({
               style={{ resize: 'none' }}
               rows={2}
               onFocus={handleInputFocus}
-              onBlur={handleInputBlur}></textarea>
+              onBlur={handleInputBlur}
+              onKeyDown={(event) => handleKeyPress(event)}></textarea>
           </div>
 
           {/* Right side contains Cheers & Emoji */}
