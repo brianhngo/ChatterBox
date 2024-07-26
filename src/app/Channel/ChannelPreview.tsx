@@ -31,9 +31,9 @@ export default function ChannelPreview() {
   return (
     <>
       {channels.length > 0 ? (
-        channels.map((channel) => (
+        channels.map((channel: any) => (
           <div
-            key={channel?.id}
+            key={channel.id}
             className="flex flex-col w-[20%] h-auto border border-gray-300 p-2 shadow-md cursor-pointer hover:shadow-lg  hover:bg-gray-100">
             <div className="w-full h-[200px] bg-gray-200 flex items-center justify-center">
               <p className="text-lg">Video Placeholder</p>
