@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 dotenv.config();
 const chatRouter = require('./api/Chat');
+const supabase = require('./database/supabase');
 
 const { Server } = require('socket.io');
 const { chat } = require('googleapis/build/src/apis/chat');
@@ -27,6 +28,7 @@ app.use('/api/profile', profileRouter);
 app.use('/api/channel', channelRouter);
 app.use('/api/following', followingRouter);
 app.use('/api/chat', chatRouter);
+const authenticateSocket = require('./api/SocketMiddleware');
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -41,9 +43,49 @@ const io = new Server(server, {
   },
 });
 
+// Function to validate token
+
+const validateToken = async (token) => {
+  try {
+    const decoded = await jwt.verify(token, process.env.JWT_KEY);
+
+    const { data, error } = await supabase
+      .from('Profile')
+      .select('*')
+      .eq('email', decoded.email)
+      .single();
+    if (data) {
+      return data;
+    }
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+};
+
 io.on('connection', (socket) => {
-  socket.on('send_message', (msg) => {
-    socket.broadcast.emit('receive_message', msg);
+  socket.on('join_room', (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  socket.on('send_message', async (data) => {
+    const { message, room, token } = data;
+
+    try {
+      // Validate the token
+      const decoded = await validateToken(token);
+
+      // Attach user info to socket for this event
+      const formattedMessage = `${decoded.username}: ${message}`;
+      io.to(room).emit('receive_message', formattedMessage);
+    } catch (error) {
+      socket.emit('error', 'Authentication required to send messages');
+    }
+  });
+
+  socket.on('leave_room', (room) => {
+    socket.leave(room);
+    console.log(`User left room:${room}`);
   });
 
   // socket.on('update_user_role', ({ user, role }) => {
@@ -83,6 +125,6 @@ io.on('connection', (socket) => {
   // });
 
   socket.on('disconnect', () => {
-    // console.log('User disconnected');
+    console.log('User disconnected');
   });
 });

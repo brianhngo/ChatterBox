@@ -30,6 +30,7 @@ export default function StreamsDetails({ params }: Params) {
         'http://localhost:3001/api/channel/getUserInformation',
         { username: username }
       );
+
       if (data) {
         setChannelData(data);
       } else {
@@ -92,7 +93,6 @@ export default function StreamsDetails({ params }: Params) {
         }
       );
       if (data) {
-        console.log(data);
         setGoOnlineStatus(data.statusLive);
         setHosting(data.hosting);
       } else {

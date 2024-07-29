@@ -38,9 +38,12 @@ export default function ChatInput({
       let information = newMessage.slice(commandIndex + 2);
       commandSwitchCase(command, information, streamId);
     } else {
-      addMessage(newMessage);
       if (newMessage) {
-        socket.emit('send_message', { message: newMessage });
+        socket.emit('send_message', {
+          message: newMessage,
+          room: streamId,
+          token: window.localStorage.getItem('token'),
+        });
       }
       setInputValue('');
     }
@@ -84,24 +87,24 @@ export default function ChatInput({
     setChatTrieState(chatTrie);
   }, []);
 
-  const useSocket = (socket, addMessage) => {
-    useEffect(() => {
-      // Define the callback function
-      const handleMessage = (data) => {
-        addMessage(data.message);
-      };
+  // Use effect for socket connection and event handling
+  useEffect(() => {
+    // Join room
+    socket.emit('join_room', streamId);
 
-      // Add the event listener
-      socket.on('receive_message', handleMessage);
+    // Define the callback function
+    const handleMessage = (data) => {
+      addMessage(data);
+    };
 
-      // Cleanup function to remove the event listener
-      return () => {
-        socket.off('receive_message', handleMessage);
-      };
-    }, [socket, addMessage]); // Add 'addMessage' as a dependency if it's defined outside this effect
-  };
+    // Add the event listener
+    socket.on('receive_message', handleMessage);
 
-  useSocket(socket, addMessage);
+    // Cleanup function to remove the event listener
+    return () => {
+      socket.off('receive_message', handleMessage);
+    };
+  }, []); // Dependencies
 
   return (
     <>

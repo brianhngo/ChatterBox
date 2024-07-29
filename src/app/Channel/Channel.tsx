@@ -29,7 +29,6 @@ export default function Channel({
 
   const followHandler = async (event: any) => {
     try {
-      console.log('follow');
       const { data } = await axios.put(
         'http://localhost:3001/api/following/addFollow',
         {
@@ -49,7 +48,6 @@ export default function Channel({
 
   const unfollowHandler = async (event: any) => {
     try {
-      console.log('unfollow');
       const { data } = await axios.put(
         'http://localhost:3001/api/following/unFollow',
         {
@@ -97,7 +95,7 @@ export default function Channel({
     <div className="flex flex-col w-full h-full items-center justify-center border border-gray-300 p-4">
       <h1 className="text-2xl text-gray-600 mb-3">
         {username} Stream
-        {onlineStatus === true ? (
+        {status === true ? (
           <span className="text-green-600 text-center text-md"> LIVE </span>
         ) : (
           <span className="text-red-600 text-center text-md"> Offline </span>

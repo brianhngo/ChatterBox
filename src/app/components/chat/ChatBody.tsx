@@ -75,7 +75,6 @@ export default function ChatBody({ messages }: { messages: Message[] }) {
         className="chat-body bg-gray-200 p-3 rounded-lg h-full max-h-full overflow-y-auto shadow-md">
         {messages.map((element, index) => (
           <p className="text-sm font-medium text-gray-600 p-2" key={index}>
-            <span className="font-bold">{element.username}</span>:{' '}
             {replaceShortcutsWithEmojis(element.message)}
           </p>
         ))}
