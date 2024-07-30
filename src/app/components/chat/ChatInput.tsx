@@ -39,6 +39,7 @@ export default function ChatInput({
       commandSwitchCase(command, information, streamId);
     } else {
       if (newMessage) {
+        console.log('clicked newMessage');
         socket.emit('send_message', {
           message: newMessage,
           room: streamId,
@@ -104,7 +105,21 @@ export default function ChatInput({
     return () => {
       socket.off('receive_message', handleMessage);
     };
-  }, []); // Dependencies
+  }, []);
+
+  // listens to auth error to open modal
+  useEffect(() => {
+    // Listen for the auth_error event from the server
+    socket.on('auth_error', (message) => {
+      console.log('hello');
+      const modalButton = document.getElementById('loginButton');
+      modalButton.click();
+    });
+
+    return () => {
+      socket.off('auth_error'); // Clean up listener on component unmount
+    };
+  }, []);
 
   return (
     <>

@@ -5,7 +5,7 @@ import Navbar from './components/chat/Navbar';
 import FooterPage from './components/chat/FooterPage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useState } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {

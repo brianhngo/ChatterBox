@@ -1,10 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import LoginModal from './LoginModal';
 Link;
 import { useRouter, usePathname } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
+import MyContext from './ProfileContext';
 
 export default function LoginFeature() {
   const router = useRouter();
@@ -78,6 +79,7 @@ export default function LoginFeature() {
         <div className="flex flex-row justify-center align-middle gap-5">
           <button
             onClick={() => toggleModal()}
+            id="loginButton"
             type="button"
             className="text-white text-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg p-2 text-center inline-flex items-center justify-between  ">
             <svg

@@ -56,6 +56,9 @@ const validateToken = async (token) => {
       .single();
     if (data) {
       return data;
+    } else {
+      console.log('false');
+      return false;
     }
   } catch (error) {
     throw new Error('Invalid token');
@@ -70,16 +73,26 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', async (data) => {
     const { message, room, token } = data;
-
-    try {
-      // Validate the token
-      const decoded = await validateToken(token);
-
-      // Attach user info to socket for this event
-      const formattedMessage = `${decoded.username}: ${message}`;
-      io.to(room).emit('receive_message', formattedMessage);
-    } catch (error) {
-      socket.emit('error', 'Authentication required to send messages');
+    if (!token) {
+      console.log('token does not exist');
+      socket.emit('auth_error', 'Authentication required to send messages');
+    } else {
+      try {
+        // Validate the token
+        const decoded = await validateToken(token);
+        console.log(decoded);
+        if (decoded) {
+          // Attach user info to socket for this event
+          const formattedMessage = `${decoded.username}: ${message}`;
+          io.to(room).emit('receive_message', formattedMessage);
+        } else {
+          // Emit an authentication error event
+          socket.emit('auth_error', 'Authentication required to send messages');
+        }
+      } catch (error) {
+        console.error(error);
+        socket.emit('auth_error', 'Authentication required to send messages');
+      }
     }
   });
 
