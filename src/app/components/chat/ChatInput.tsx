@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { chatTrie, commandSwitchCase, Trie } from './ChatInputUtility';
 import AutoSuggest from './AutoSuggest';
-
+import 'react-toastify/dist/ReactToastify.css';
 import io from 'socket.io-client';
+import { toast } from 'react-toastify';
 
-const socket = io('http://localhost:3001');
+export const socket = io('http://localhost:3001');
 
 export default function ChatInput({
   inputValue,
@@ -33,13 +34,14 @@ export default function ChatInput({
   const submitHandler = (newMessage: string) => {
     //  i need to check if it begins with /
     if (newMessage[0] === '/') {
+      console.log('command');
       let commandIndex = newMessage.indexOf(' ');
       let command = newMessage.slice(0, commandIndex);
       let information = newMessage.slice(commandIndex + 2);
       commandSwitchCase(command, information, streamId);
+      setInputValue('');
     } else {
       if (newMessage) {
-        console.log('clicked newMessage');
         socket.emit('send_message', {
           message: newMessage,
           room: streamId,
@@ -107,17 +109,105 @@ export default function ChatInput({
     };
   }, []);
 
-  // listens to auth error to open modal
+  // listens to auth error. Will open modal if user tries to chat and not logged in
   useEffect(() => {
-    // Listen for the auth_error event from the server
     socket.on('auth_error', (message) => {
-      console.log('hello');
       const modalButton = document.getElementById('loginButton');
       modalButton.click();
     });
 
     return () => {
       socket.off('auth_error'); // Clean up listener on component unmount
+    };
+  }, []);
+
+  // responsible for mounting mute/error
+  useEffect(() => {
+    // Define the event handlers
+    const handleMuteUser = (message) => {
+      console.log('hi');
+      toast.success('Successfully muted the user!');
+    };
+
+    const handleFailedMute = (message) => {
+      console.log('hello');
+      toast.error('Error. Cannot mute this user');
+    };
+
+    // Attach the event listeners
+    socket.on('mute_user2', handleMuteUser);
+    socket.on('failed_mute2', handleFailedMute);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      socket.off('mute_user2', handleMuteUser);
+      socket.off('failed_mute2', handleFailedMute);
+    };
+  }, []);
+
+  // Responsible for mounting unmute/error
+  useEffect(() => {
+    // Define the event handlers
+    const handleUnMuteUser = (message) => {
+      toast.success('Successfully unmuted the user!');
+    };
+
+    const handleFailedUnMute = (message) => {
+      toast.error('Error. Cannot unmute this user');
+    };
+
+    const handleYourMuted = (message) => {
+      toast.error('You are muted. Please Contact Admin');
+    };
+
+    // Attach the event listeners
+    socket.on('unmute_user2', handleUnMuteUser);
+    socket.on('failed_unmute2', handleFailedUnMute);
+    socket.on('your_muted', handleYourMuted);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      socket.off('unmute_user2', handleUnMuteUser);
+      socket.off('failed_unmute2', handleFailedUnMute);
+      socket.off('your_muted', handleYourMuted);
+    };
+  }, []);
+
+  // responsible for making a user an admin
+  useEffect(() => {
+    const handleMakeUserAdmin = (message) => {
+      toast.success('User is now Admin');
+    };
+
+    const handleFailUserAdmin = (message) => {
+      toast.error('Cannot make user admin');
+    };
+
+    socket.on('admin_user', handleMakeUserAdmin);
+    socket.on('failed_setAdmin2', handleFailUserAdmin);
+
+    return () => {
+      socket.off('admin_user', handleMakeUserAdmin);
+      socket.off('failed_setAdmin2', handleFailUserAdmin);
+    };
+  }, []);
+
+  // responsible for Making a user not an admin
+  useEffect(() => {
+    const handleUnMakeUserAdmin = (message) => {
+      toast.success('User is no longer admin');
+    };
+
+    const handleFailUnUserAdmin = (message) => {
+      toast.error('Cannot remove user as admin');
+    };
+
+    socket.on('unsetAdmin_user2', handleUnMakeUserAdmin);
+    socket.on('failed_unsetAdminUser2', handleFailUnUserAdmin);
+
+    return () => {
+      socket.off('unsetAdmin_user2', handleUnMakeUserAdmin);
+      socket.off('failed_unsetAdminUser2', handleFailUnUserAdmin);
     };
   }, []);
 
@@ -149,15 +239,14 @@ export default function ChatInput({
                 strokeLinejoin="round"
               />
             </svg>
-            <textarea
+            <input
               value={inputValue}
               onChange={inputValueHandler}
               className="pl-2 outline-none text-black flex-grow pr-2"
               style={{ resize: 'none' }}
-              rows={2}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              onKeyDown={(event) => handleKeyPress(event)}></textarea>
+              onKeyDown={(event) => handleKeyPress(event)}></input>
           </div>
 
           {/* Right side contains Cheers & Emoji */}

@@ -1,6 +1,5 @@
 import axios from 'axios';
-// import { io } from 'socket.io-client';
-// const socket = io('http://localhost:3001')
+import { socket } from './ChatInput';
 // This will contain functions + classes that are defined here and exported
 
 //  Trie Data structure to store 3 triggers (@, /, :, text),
@@ -145,7 +144,7 @@ const commands: Command[] = [
 export async function commandSwitchCase(command, information, streamId) {
   try {
     let response;
-    console.log(command, information);
+
     switch (command) {
       case '/setadmin':
         response = await axios.put('http://localhost:3001/api/chat/setAdmin', {
@@ -154,9 +153,11 @@ export async function commandSwitchCase(command, information, streamId) {
           streamsId: streamId,
         });
 
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('setAdmin_user');
+        } else {
+          socket.emit('failed_setAdminUSER');
+        }
         break;
 
       case '/unsetadmin':
@@ -168,21 +169,26 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('unsetAdmin_user');
+        } else {
+          socket.emit('failed_unsetAdminUser');
+        }
 
         break;
 
       case '/mute':
+        console.log('mute1');
         response = await axios.put('http://localhost:3001/api/chat/muteUser', {
           token: window.localStorage.getItem('token'),
           selectedUser: information,
           streamsId: streamId,
         });
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('mute_user');
+        } else {
+          socket.emit('failed_muteUSER');
+        }
 
         break;
 
@@ -194,10 +200,13 @@ export async function commandSwitchCase(command, information, streamId) {
             selectedUser: information,
             streamsId: streamId,
           }
-          // if (response.data){
-          //   socket.emit('update_user', {})
-          // }
         );
+
+        if (response.data) {
+          socket.emit('unmute_user');
+        } else {
+          socket.emit('failed_unmuteUSER');
+        }
 
         break;
 
