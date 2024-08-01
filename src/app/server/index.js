@@ -188,7 +188,9 @@ io.on('connection', (socket) => {
 
   // Set as Admin
   socket.on('setAdmin_user', async (data) => {
+    const { selectedUser, streamsId, token } = data;
     socket.emit('admin_user', 'You had made this user admin');
+    socket.to(userSocketMap.get(selectedUser)).emit('receivedUser_Admin');
   });
 
   // Error set as admin
@@ -198,7 +200,9 @@ io.on('connection', (socket) => {
 
   // Remove as Admin
   socket.on('unsetAdmin_user', async (data) => {
+    const { selectedUser, streamsId, token } = data;
     socket.emit('unsetAdmin_user2', 'You have remove this user as admin');
+    socket.to(userSocketMap.get(selectedUser)).emit('receivedUser_NotAdmin');
   });
 
   socket.on('failed_unsetAdminUser', async (data) => {

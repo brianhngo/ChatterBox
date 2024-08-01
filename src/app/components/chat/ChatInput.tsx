@@ -191,12 +191,18 @@ export default function ChatInput({
       toast.error('Cannot make user admin');
     };
 
+    const handleUserReceiveAdmin = (message) => {
+      toast.success('You are now an admin of this channel');
+    };
+
     socket.on('admin_user', handleMakeUserAdmin);
     socket.on('failed_setAdmin2', handleFailUserAdmin);
+    socket.on('receivedUser_Admin', handleUserReceiveAdmin);
 
     return () => {
       socket.off('admin_user', handleMakeUserAdmin);
       socket.off('failed_setAdmin2', handleFailUserAdmin);
+      socket.off('receivedUser_Admin', handleUserReceiveAdmin);
     };
   }, []);
 
@@ -210,12 +216,18 @@ export default function ChatInput({
       toast.error('Cannot remove user as admin');
     };
 
+    const handleUserLoseAdmin = (message) => {
+      toast.error('You have been removed as admin for this channel');
+    };
+
     socket.on('unsetAdmin_user2', handleUnMakeUserAdmin);
     socket.on('failed_unsetAdminUser2', handleFailUnUserAdmin);
+    socket.on('receivedUser_NotAdmin', handleUserLoseAdmin);
 
     return () => {
       socket.off('unsetAdmin_user2', handleUnMakeUserAdmin);
       socket.off('failed_unsetAdminUser2', handleFailUnUserAdmin);
+      socket.off('receivedUser_NotAdmin', handleUserLoseAdmin);
     };
   }, []);
 

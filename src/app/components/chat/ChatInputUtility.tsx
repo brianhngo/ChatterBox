@@ -154,7 +154,11 @@ export async function commandSwitchCase(command, information, streamId) {
         });
 
         if (response.data) {
-          socket.emit('setAdmin_user');
+          socket.emit('setAdmin_user', {
+            selectedUser: information,
+            token: window.localStorage.getItem('token'),
+            streamsId: streamId,
+          });
         } else {
           socket.emit('failed_setAdminUSER');
         }
@@ -170,7 +174,11 @@ export async function commandSwitchCase(command, information, streamId) {
           }
         );
         if (response.data) {
-          socket.emit('unsetAdmin_user');
+          socket.emit('unsetAdmin_user', {
+            selectedUser: information,
+            token: window.localStorage.getItem('token'),
+            streamsId: streamId,
+          });
         } else {
           socket.emit('failed_unsetAdminUser');
         }
