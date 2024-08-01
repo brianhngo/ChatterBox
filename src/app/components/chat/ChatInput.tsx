@@ -93,7 +93,10 @@ export default function ChatInput({
   // Use effect for socket connection and event handling
   useEffect(() => {
     // Join room
-    socket.emit('join_room', streamId);
+    socket.emit('join_room', {
+      room: streamId,
+      token: window.localStorage.getItem('token'),
+    });
 
     // Define the callback function
     const handleMessage = (data) => {
@@ -125,23 +128,28 @@ export default function ChatInput({
   useEffect(() => {
     // Define the event handlers
     const handleMuteUser = (message) => {
-      console.log('hi');
       toast.success('Successfully muted the user!');
     };
 
     const handleFailedMute = (message) => {
-      console.log('hello');
       toast.error('Error. Cannot mute this user');
+    };
+
+    const handleBeenMute = () => {
+      console.log('hello');
+      toast.error('Youve been muted by admin');
     };
 
     // Attach the event listeners
     socket.on('mute_user2', handleMuteUser);
     socket.on('failed_mute2', handleFailedMute);
+    socket.on('receiving_mute', handleBeenMute);
 
     // Cleanup event listeners on component unmount
     return () => {
       socket.off('mute_user2', handleMuteUser);
       socket.off('failed_mute2', handleFailedMute);
+      socket.off('receiving_mute', handleBeenMute);
     };
   }, []);
 
@@ -156,20 +164,20 @@ export default function ChatInput({
       toast.error('Error. Cannot unmute this user');
     };
 
-    const handleYourMuted = (message) => {
-      toast.error('You are muted. Please Contact Admin');
+    const handleNotMuted = (message) => {
+      toast.error('You are no londer muted');
     };
 
     // Attach the event listeners
     socket.on('unmute_user2', handleUnMuteUser);
     socket.on('failed_unmute2', handleFailedUnMute);
-    socket.on('your_muted', handleYourMuted);
+    socket.on('your_unmuted', handleNotMuted);
 
     // Cleanup event listeners on component unmount
     return () => {
       socket.off('unmute_user2', handleUnMuteUser);
       socket.off('failed_unmute2', handleFailedUnMute);
-      socket.off('your_muted', handleYourMuted);
+      socket.off('your_unmuted', handleNotMuted);
     };
   }, []);
 

@@ -41,7 +41,7 @@ router.put('/loginuser', async (req, res) => {
 
       if (error !== null || data.length < 1) {
         // Doesn't exist in the db
-        return res.status(404).send(false);
+        return res.status(200).send(false);
       }
 
       // decrypting the password
@@ -79,7 +79,7 @@ router.put('/loginuser', async (req, res) => {
           });
         });
       } else {
-        return res.status(404).send(false);
+        return res.status(200).send(false);
       }
     } else {
       return res.status(400).send('Email and password are required');
@@ -140,7 +140,7 @@ router.put('/createuser', async (req, res) => {
 
       // if the length is 0, we know that the username and email is available
       if (data && data.length > 0) {
-        res.status(404).json(false);
+        res.status(200).json(false);
       } else {
         // Adding the username & password to DB
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -389,7 +389,7 @@ router.put('/changePassword', authenticateToken, async (req, res) => {
         res.status(200).send(true);
       }
     } else {
-      res.status(404).send(false);
+      res.status(200).send(false);
     }
   } catch (error) {
     console.error(error);

@@ -185,7 +185,11 @@ export async function commandSwitchCase(command, information, streamId) {
           streamsId: streamId,
         });
         if (response.data) {
-          socket.emit('mute_user');
+          socket.emit('mute_user', {
+            selectedUser: information,
+            streamsId: streamId,
+            token: window.localStorage.getItem('token'),
+          });
         } else {
           socket.emit('failed_muteUSER');
         }
@@ -203,7 +207,11 @@ export async function commandSwitchCase(command, information, streamId) {
         );
 
         if (response.data) {
-          socket.emit('unmute_user');
+          socket.emit('unmute_user', {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          });
         } else {
           socket.emit('failed_unmuteUSER');
         }
@@ -216,9 +224,15 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('ban_user', {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          });
+        } else {
+          socket.emit('failed_ban', {});
+        }
         break;
 
       case '/unban':
@@ -227,9 +241,11 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('unban_user', {});
+        } else {
+          socket.emit('failed_unban');
+        }
 
         break;
 

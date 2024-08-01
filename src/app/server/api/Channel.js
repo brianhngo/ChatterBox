@@ -29,7 +29,7 @@ router.put('/getUserInformation', async (req, res) => {
       .single();
 
     if (profileError) {
-      res.status(400).json({
+      res.status(200).json({
         message: 'Profile Doesnt exist',
       });
     }
@@ -42,7 +42,7 @@ router.put('/getUserInformation', async (req, res) => {
       .single();
 
     if (channelError) {
-      res.status(400).json({
+      res.status(200).json({
         message: 'Channel doesnt exist',
       });
     }
@@ -99,7 +99,7 @@ router.put('/goLive', authenticateToken, async (req, res) => {
       .single();
 
     if (profileError || !profileData) {
-      res.status(404).json({ message: 'Profile not found' });
+      res.status(200).json({ message: 'Profile not found' });
       return;
     }
 

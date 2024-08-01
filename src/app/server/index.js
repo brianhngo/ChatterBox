@@ -55,7 +55,6 @@ const validateToken = async (token, room) => {
       .select('id')
       .eq('username', room)
       .single();
-    console.log('userData', userData);
 
     const { data: viewersData, error: viewerError } = await supabase
       .from('Profile')
@@ -75,8 +74,9 @@ const validateToken = async (token, room) => {
         // Check if the user is banned or muted
 
         if (
-          channelData.bannedUsers[viewersData.username] ||
-          channelData.mutedUsers[viewersData.username]
+          channelData.bannedUsers[viewersData.username]
+          // ||
+          // channelData.mutedUsers[viewersData.username]
         ) {
           return 'banned';
         } else {
@@ -88,6 +88,7 @@ const validateToken = async (token, room) => {
             .single();
 
           if (data) {
+            console.log('data');
             return data;
           } else {
             return false;
@@ -102,14 +103,27 @@ const validateToken = async (token, room) => {
     }
   } catch (error) {
     console.log(error);
-    throw new Error('Invalid token');
+    return false;
   }
 };
 
+const userSocketMap = new Map();
+
 io.on('connection', (socket) => {
-  socket.on('join_room', (room) => {
-    socket.join(room);
-    console.log(`User joined room: ${room}`);
+  socket.on('join_room', async ({ room, token }) => {
+    const decoded = await validateToken(token, room);
+    if (decoded) {
+      // token
+      userSocketMap.set(decoded.username, socket.id);
+
+      socket.join(room);
+      console.log(`${socket.id} joined room: ${room}`);
+    } else if (decoded === 'banned' || decoded === false) {
+      // failed token
+      console.log('failed Token');
+      socket.join(room);
+      console.log(`${socket.id} joined room: ${room}`);
+    }
   });
 
   socket.on('send_message', async (data) => {
@@ -139,21 +153,38 @@ io.on('connection', (socket) => {
   });
   // Mute
   socket.on('mute_user', async (data) => {
+    const { selectedUser, streamsId, token } = data;
+
+    // To user doing action
     socket.emit('mute_user2', 'You have sucessfully muted the user');
+    // To User receiving action
+
+    socket
+      .to(userSocketMap.get(selectedUser))
+      .emit('receiving_mute', 'You been muted');
   });
   // error Mute
   socket.on('failed_muteUSER', async (data) => {
     socket.emit('failed_mute2', 'You cannot mute this user');
   });
+  // Recipient of being muted
 
   // Unmute
   socket.on('unmute_user', async (data) => {
+    const { selectedUser, streamsId, token } = data;
+
+    // To user doing action
     socket.emit('unmute_user2', 'You have successfully unmute');
+    // to User receiving action
+    socket
+      .to(userSocketMap.get(selectedUser))
+      .emit('your_unmuted', 'You have successfully been unmuted');
   });
   // error unMute
   socket.on('failed_unmuteUSER', async (data) => {
     socket.emit('failed_unmute2', 'You cannot unmute this user');
   });
+  // recipient of being unmuted
 
   // Set as Admin
   socket.on('setAdmin_user', async (data) => {
@@ -174,14 +205,35 @@ io.on('connection', (socket) => {
     socket.emit('failed_unsetAdminUser2');
   });
 
-  socket.on('leave_room', (room) => {
-    socket.leave(room);
-    console.log(`User left room:${room}`);
+  // Ban user
+  socket.on('ban_success', ({ user, role }) => {
+    io.emit('ban_successful');
   });
 
-  // socket.on('update_user_role', ({ user, role }) => {
-  //   io.emit('user_role_updated', { user, role });
-  // });
+  // unban user
+  socket.on('ban_failed', ({}) => {
+    io.emit('failed_ban2');
+  });
+
+  // unban user
+  socket.on('unban_user', ({}) => {
+    io.emit('unban_user2');
+  });
+
+  socket.on('failed_unban', ({}) => {
+    io.emit('failed_unban2');
+  });
+
+  socket.on('leave_room', (room) => {
+    socket.leave(room);
+    for (const [username, socketId] of userSocketMap.entries()) {
+      if (socketId === socket.id) {
+        userSocketMap.delete(username);
+        break;
+      }
+    }
+    console.log(`User left room:${room}`);
+  });
 
   // socket.on('mute_user', ({ user }) => {
   //   io.emit('user_muted', { user });

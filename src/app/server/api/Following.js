@@ -52,7 +52,7 @@ router.put('/addFollow', authenticateToken, async (req, res) => {
 
       res.status(200).json(true);
     } else {
-      res.status(404).json({ message: 'Following data not found' });
+      res.status(200).json({ message: 'Following data not found' });
     }
   } catch (error) {
     console.error(error);
@@ -124,7 +124,7 @@ router.put('/checkFollowing', authenticateToken, async (req, res) => {
         res.status(200).json(false);
       }
     } else {
-      res.status(404).json({ message: 'Following data not found' });
+      res.status(200).json({ message: 'Following data not found' });
     }
   } catch (error) {
     console.error(error);

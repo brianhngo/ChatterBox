@@ -8,7 +8,7 @@ async function authenticateToken(req, res, next) {
 
     if (token === null) {
       req.body.guest = true;
-      res.status(403).json(false);
+      res.status(200).json(false);
     } else {
       // verifies token to see if its valid
       const decoded = await jwt.verify(token, process.env.JWT_KEY);
