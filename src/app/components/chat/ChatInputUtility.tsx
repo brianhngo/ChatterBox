@@ -233,13 +233,13 @@ export async function commandSwitchCase(command, information, streamId) {
           streamsId: streamId,
         });
         if (response.data) {
-          socket.emit('ban_user', {
+          socket.emit('ban_success', {
             token: window.localStorage.getItem('token'),
             selectedUser: information,
             streamsId: streamId,
           });
         } else {
-          socket.emit('failed_ban', {});
+          socket.emit('ban_failed', {});
         }
         break;
 
@@ -250,7 +250,11 @@ export async function commandSwitchCase(command, information, streamId) {
           streamsId: streamId,
         });
         if (response.data) {
-          socket.emit('unban_user', {});
+          socket.emit('unban_user', {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          });
         } else {
           socket.emit('failed_unban');
         }
@@ -263,20 +267,32 @@ export async function commandSwitchCase(command, information, streamId) {
           selectedUser: information,
           streamsId: streamId,
         });
-        break;
-      // if (response.data){
-      //   socket.emit('update_user', {})
-      // }
 
+        if (response.data) {
+          socket.emit('suspend_streamer', {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          });
+        } else {
+          socket.emit('failsuspend_streamer');
+        }
+        break;
       case '/unsuspend':
         response = await axios.put('http://localhost:3001/api/chat/unsuspend', {
           token: window.localStorage.getItem('token'),
           selectedUser: information,
           streamsId: streamId,
         });
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('unsuspend_streamer', {
+            token: window.localStorage.getItem('token'),
+            selectedUser: information,
+            streamsId: streamId,
+          });
+        } else {
+          socket.emit('failunsuspend_streamer');
+        }
 
         break;
 

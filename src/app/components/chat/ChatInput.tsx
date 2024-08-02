@@ -231,6 +231,125 @@ export default function ChatInput({
     };
   }, []);
 
+  // resonsible for ban of a user
+  useEffect(() => {
+    const handleMakeBanUser = (message) => {
+      toast.success('User is banned');
+    };
+
+    const handleFailBanUser = (message) => {
+      toast.error('Unable to ban user');
+    };
+
+    const handleUserReceiveBan = (message) => {
+      toast.success('You have been banned');
+    };
+
+    socket.on('ban_successful', handleMakeBanUser);
+    socket.on('ban_failed2', handleFailBanUser);
+    socket.on('receivedUser_ban', handleUserReceiveBan);
+
+    return () => {
+      socket.off('ban_successful', handleMakeBanUser);
+      socket.off('ban_failed2', handleFailBanUser);
+      socket.off('receivedUser_ban', handleUserReceiveBan);
+    };
+  }, []);
+
+  // resonsible for ban of a user
+  useEffect(() => {
+    const handleMakeUnBanUser = (message) => {
+      toast.success('User is unbanned');
+    };
+
+    const handleFailUnBanUser = (message) => {
+      toast.error('Unable to ban user');
+    };
+
+    const handleUserReceiveUnBan = (message) => {
+      toast.success('You have been unbanned');
+    };
+
+    socket.on('unban_user2', handleMakeUnBanUser);
+    socket.on('failed_unban2', handleFailUnBanUser);
+    socket.on('receivedUser_unban', handleUserReceiveUnBan);
+
+    return () => {
+      socket.off('unban_user2', handleMakeUnBanUser);
+      socket.off('failed_unban2', handleFailUnBanUser);
+      socket.off('receivedUser_unban', handleUserReceiveUnBan);
+    };
+  }, []);
+
+  // resonsible for suspension of a user
+  useEffect(() => {
+    const handleSuspendStream = (message) => {
+      toast.success('Streamer is Suspended');
+    };
+
+    const handleFailSuspension = (message) => {
+      toast.error('Unable to suspend user');
+    };
+
+    const handleUserReceiveSuspension = (message) => {
+      toast.success('You have been suspended');
+    };
+
+    socket.on('confirmation_suspension', handleSuspendStream);
+    socket.on('failedsuspend_streamer2', handleFailSuspension);
+    socket.on('receive_suspension', handleUserReceiveSuspension);
+
+    return () => {
+      socket.off('confirmation_suspension', handleSuspendStream);
+      socket.off('failedsuspend_streamer2', handleFailSuspension);
+      socket.off('receive_suspension', handleUserReceiveSuspension);
+    };
+  }, []);
+
+  // resonsible for removing suspension of a user
+  useEffect(() => {
+    const handleUnSuspendStream = (message) => {
+      toast.success('Streamer is no longer Suspended');
+    };
+
+    const handleFailUnSuspension = (message) => {
+      toast.error('Unable to remove suspension user');
+    };
+
+    const handleUserReceiveUnSuspension = (message) => {
+      toast.success('You are no longer suspended');
+    };
+
+    socket.on('confirmation_unsuspension', handleUnSuspendStream);
+    socket.on('failunsuspend_streamer2', handleFailUnSuspension);
+    socket.on('receive_unsuspension', handleUserReceiveUnSuspension);
+
+    return () => {
+      socket.off('confirmation_unsuspension', handleUnSuspendStream);
+      socket.off('failunsuspend_streamer2', handleFailUnSuspension);
+      socket.off('receive_unsuspension', handleUserReceiveUnSuspension);
+    };
+  }, []);
+
+  // change title and description of stream
+  useEffect(() => {
+    const handleChangeTitle = (message) => {
+      toast.success('Title updated!');
+    };
+
+    const handleChangeDescription = (message) => {
+      toast.success('description updated!');
+    };
+
+    socket.on('changedTitle', handleChangeTitle);
+    socket.on('changeDescription', handleChangeDescription);
+
+    return () => {
+      socket.off('changedTitle', handleChangeTitle);
+      socket.off('changeDescription', handleChangeDescription);
+    };
+  });
+
   return (
     <>
       <div className="flex flex-col">

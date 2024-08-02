@@ -110,6 +110,7 @@ const validateToken = async (token, room) => {
 const userSocketMap = new Map();
 
 io.on('connection', (socket) => {
+  // Connection
   socket.on('join_room', async ({ room, token }) => {
     const decoded = await validateToken(token, room);
     if (decoded) {
@@ -118,12 +119,13 @@ io.on('connection', (socket) => {
 
       socket.join(room);
       console.log(`${socket.id} joined room: ${room}`);
-    } else if (decoded === 'banned' || decoded === false) {
-      // failed token
-      console.log('failed Token');
-      socket.join(room);
-      console.log(`${socket.id} joined room: ${room}`);
     }
+    // else if (decoded === 'banned' || decoded === false) {
+    //   // failed token
+    //   console.log('failed Token');
+    //   socket.join(room);
+    //   console.log(`${socket.id} joined room: ${room}`);
+    // }
   });
 
   socket.on('send_message', async (data) => {
@@ -210,22 +212,55 @@ io.on('connection', (socket) => {
   });
 
   // Ban user
-  socket.on('ban_success', ({ user, role }) => {
-    io.emit('ban_successful');
+  socket.on('ban_success', async (data) => {
+    const { selectedUser, streamsId, token } = data;
+    console.log(selectedUser, userSocketMap.get(selectedUser), userSocketMap);
+    socket.emit('ban_successful', 'banned');
+    socket
+      .to(userSocketMap.get(selectedUser))
+      .emit('receivedUser_ban', 'you been banned');
+  });
+
+  // ban user failed
+  socket.on('ban_failed', () => {
+    socket.emit('ban_failed2');
   });
 
   // unban user
-  socket.on('ban_failed', ({}) => {
-    io.emit('failed_ban2');
+  socket.on('unban_user', (data) => {
+    const { selectedUser, streamsId, token } = data;
+
+    socket.emit('unban_user2');
+    socket
+      .to(userSocketMap.get(selectedUser))
+      .emit('receivedUser_unban', 'you been banned');
   });
 
-  // unban user
-  socket.on('unban_user', ({}) => {
-    io.emit('unban_user2');
+  // unban User failed
+  socket.on('failed_unban', () => {
+    socket.emit('failed_unban2');
   });
 
-  socket.on('failed_unban', ({}) => {
-    io.emit('failed_unban2');
+  // suspends user streaming channel
+  socket.on('suspend_streamer', (data) => {
+    const { selectedUser, streamsId, token } = data;
+    socket.emit('confirmation_suspension');
+    socket.to(userSocketMap.get(streamsId)).emit('receive_suspension');
+  });
+  // fails suspends user streaming
+  socket.on('failsuspend_streamer', () => {
+    socket.emit('failedsuspend_streamer2');
+  });
+
+  // unsuspend user's streaming channel
+  socket.on('unsuspend_streamer', (data) => {
+    const { selectedUser, streamsId, token } = data;
+    socket.emit('confirmation_unsuspension');
+    socket.to(userSocketMap.get(streamsId)).emit('receive_unsuspension');
+  });
+
+  socket.on('failunsuspend_streamer', () => {
+    socket.emit('failunsuspend_streamer2');
   });
 
   socket.on('leave_room', (room) => {
@@ -236,6 +271,16 @@ io.on('connection', (socket) => {
         break;
       }
     }
+
+    socket.on('update_title', (data) => {
+      const { selectedUser, streamsId, token } = data;
+      socket.emit('changedTitle');
+    });
+
+    socket.on('update_description', (data) => {
+      const { selectedUser, streamsId, token } = data;
+      socket.emit('changeDescription');
+    });
     console.log(`User left room:${room}`);
   });
 
