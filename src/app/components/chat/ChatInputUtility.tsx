@@ -305,9 +305,13 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('set_title', {
+            streamsId: streamId,
+            text: information,
+            token: window.localStorage.getItem('token'),
+          });
+        }
 
         break;
       case '/setdescription':
@@ -319,9 +323,13 @@ export async function commandSwitchCase(command, information, streamId) {
             streamsId: streamId,
           }
         );
-        // if (response.data){
-        //   socket.emit('update_user', {})
-        // }
+        if (response.data) {
+          socket.emit('set_description', {
+            streamsId: streamId,
+            text: information,
+            token: window.localStorage.getItem('token'),
+          });
+        }
         break;
       default:
         break;

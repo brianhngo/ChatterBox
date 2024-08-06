@@ -263,6 +263,18 @@ io.on('connection', (socket) => {
     socket.emit('failunsuspend_streamer2');
   });
 
+  socket.on('set_title', (data) => {
+    const { streamsId, text, token } = data;
+
+    socket.emit('changeTitle', text);
+  });
+
+  socket.on('set_description', (data) => {
+    const { streamsId, text, token } = data;
+
+    socket.emit('changeDescription', text);
+  });
+
   socket.on('leave_room', (room) => {
     socket.leave(room);
     for (const [username, socketId] of userSocketMap.entries()) {
@@ -271,50 +283,8 @@ io.on('connection', (socket) => {
         break;
       }
     }
-
-    socket.on('update_title', (data) => {
-      const { selectedUser, streamsId, token } = data;
-      socket.emit('changedTitle');
-    });
-
-    socket.on('update_description', (data) => {
-      const { selectedUser, streamsId, token } = data;
-      socket.emit('changeDescription');
-    });
     console.log(`User left room:${room}`);
   });
-
-  // socket.on('mute_user', ({ user }) => {
-  //   io.emit('user_muted', { user });
-  // });
-
-  // socket.on('unmute_user', ({ user }) => {
-  //   io.emit('user_unmuted', { user });
-  // });
-
-  // socket.on('ban_user', ({ user }) => {
-  //   io.emit('user_banned', { user });
-  // });
-
-  // socket.on('unban_user', ({ user }) => {
-  //   io.emit('user_unbanned', { user });
-  // });
-
-  // socket.on('suspend_channel', ({ streamId }) => {
-  //   io.emit('channel_suspended', { streamId });
-  // });
-
-  // socket.on('unsuspend_channel', ({ streamId }) => {
-  //   io.emit('channel_unsuspended', { streamId });
-  // });
-
-  // socket.on('update_title', ({ streamId, title }) => {
-  //   io.emit('title_updated', { streamId, title });
-  // });
-
-  // socket.on('update_description', ({ streamId, description }) => {
-  //   io.emit('description_updated', { streamId, description });
-  // });
 
   socket.on('disconnect', () => {
     console.log('User disconnected');

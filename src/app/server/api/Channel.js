@@ -53,6 +53,9 @@ router.put('/getUserInformation', async (req, res) => {
       followers: channelData.FollowersCount,
       sub: channelData.SubCount,
       status: channelData.Status,
+      title: channelData.Title,
+      description: channelData.Description,
+      isSuspended: channelData.IsSuspended,
     });
   } catch (error) {
     console.error('Internal Server Error:', error.message);
@@ -91,59 +94,67 @@ router.put('/goLive', authenticateToken, async (req, res) => {
     const email = req.body.decoded; // from authenticateToken
     const uid = req.body.decodedUID;
 
-    // Fetch profile to get UUID
-    const { data: profileData, error: profileError } = await supabase
-      .from('Profile')
-      .select('id, username')
-      .eq('email', email)
-      .single();
-
-    if (profileError || !profileData) {
-      res.status(200).json({ message: 'Profile not found' });
-      return;
-    }
-
-    const profileUUID = profileData.id;
-
-    // Update channel status to true using profile UUID
-    await supabase
+    const { data: channelDataCheck, error: channelDataChecl } = await supabase
       .from('Channel')
-      .update({ Status: true })
-      .eq('uuid', profileUUID);
-
-    // getting all the  accounts name and then matching it with their profile data
-    const { data: FollowersData, error: FollowersError } = await supabase
-      .from('Following')
-      .select('following, uuid');
-
-    let index = email.indexOf('@');
-    let username = email.slice(0, index);
-
-    if (FollowersData) {
-      const filteredEntries = FollowersData.filter((entry) => {
-        const followersJson = entry.following;
-
-        return followersJson && Object.keys(followersJson).includes(username);
-      });
-
-      const { data: profilesData, error: profilesError } = await supabase
+      .select('IsSuspended')
+      .eq('uuid', uid);
+    if (channelDataCheck.IsSuspended) {
+      res.status(200).json(false);
+    } else {
+      // Fetch profile to get UUID
+      const { data: profileData, error: profileError } = await supabase
         .from('Profile')
-        .select('email')
-        .in(
-          'id',
-          filteredEntries.map((element, key) => element.uuid)
-        );
+        .select('id, username')
+        .eq('email', email)
+        .single();
 
-      if (profilesData) {
-        profilesData.forEach((profile) => {
-          sendEmail(
-            profile.email,
-            'Now Live on Chatterbox',
-            profileData.username
-          ); // Assuming you have profile.username
+      if (profileError || !profileData) {
+        res.status(200).json({ message: 'Profile not found' });
+        return;
+      }
+
+      const profileUUID = profileData.id;
+
+      // Update channel status to true using profile UUID
+      await supabase
+        .from('Channel')
+        .update({ Status: true })
+        .eq('uuid', profileUUID);
+
+      // getting all the  accounts name and then matching it with their profile data
+      const { data: FollowersData, error: FollowersError } = await supabase
+        .from('Following')
+        .select('following, uuid');
+
+      let index = email.indexOf('@');
+      let username = email.slice(0, index);
+
+      if (FollowersData) {
+        const filteredEntries = FollowersData.filter((entry) => {
+          const followersJson = entry.following;
+
+          return followersJson && Object.keys(followersJson).includes(username);
         });
 
-        res.status(200).json({ username: profileData.username });
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('Profile')
+          .select('email')
+          .in(
+            'id',
+            filteredEntries.map((element, key) => element.uuid)
+          );
+
+        if (profilesData) {
+          profilesData.forEach((profile) => {
+            sendEmail(
+              profile.email,
+              'Now Live on Chatterbox',
+              profileData.username
+            ); // Assuming you have profile.username
+          });
+
+          res.status(200).json({ username: profileData.username });
+        }
       }
     }
   } catch (error) {

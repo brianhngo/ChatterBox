@@ -86,6 +86,8 @@ export default function LoginModal({
         setErrorMessage(false);
         setUid(data.uid);
         toast.success('Success!');
+      } else {
+        errorMessageHandler(true);
       }
     } catch (error) {
       console.error('Login error:', error);
