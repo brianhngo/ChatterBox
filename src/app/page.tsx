@@ -10,6 +10,7 @@ import Navbar from './components/chat/Navbar';
 import FooterPage from './components/chat/FooterPage';
 import HeroBanner from './components/HeroBanner';
 import CategoriesBanner from './components/CategoriesBanner';
+import StreamersBanner from './components/StreamersBanner';
 
 export default function Home() {
   return (
@@ -17,8 +18,11 @@ export default function Home() {
       <div>
         <HeroBanner />
       </div>
-      <div>
+      <div className="w-4/5 flex flex-col mx-auto justify-center align-middle">
         <CategoriesBanner />
+      </div>
+      <div className="w-4/5 flex flex-col mx-auto justify-center align-middle">
+        <StreamersBanner />
       </div>
     </main>
   );
