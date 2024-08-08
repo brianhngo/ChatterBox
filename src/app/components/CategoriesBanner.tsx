@@ -13,7 +13,7 @@ const gameData = [
   { src: 'podcasting.png', alt: 'Podcasting' },
 ];
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 5;
 
 export default function CategoriesBanner() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,12 +32,12 @@ export default function CategoriesBanner() {
 
   return (
     <section className="py-24 w-full">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="pb-16">
-          <h2 className="w-full text-left text-gray-900 text-4xl font-bold font-manrope leading-loose pb-2.5">
+          <h2 className="w-full text-left text-gray-900 text-5xl font-bold font-manrope leading-loose pb-2.5">
             Browse by Game
           </h2>
-          <p className="w-full text-left text-gray-600 text-lg font-normal leading-8">
+          <p className="w-full text-left text-gray-600 text-xl font-normal leading-8">
             Explore the wide variety of games being streamed
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function CategoriesBanner() {
             {currentItems.map((item, index) => (
               <div
                 key={index}
-                className="swiper-slide max-w-[319px] cursor-pointer grid">
+                className="swiper-slide max-w-[319px] cursor-pointer grid hover:bg-slate-300 shadow-sm transition-transform transform hover:scale-105 hover:shadow-lg">
                 <img
                   className="grow shrink basis-0 w-[285px] h-[380px] rounded-xl"
                   src={item.src}
@@ -95,7 +95,7 @@ export default function CategoriesBanner() {
               />
             </svg>
           </button>
-          <p className="text-right text-blue-600 hover:cursor-pointer hover:underline text-lg">
+          <p className="text-right text-blue-600 hover:cursor-pointer hover:underline text-xl">
             {' '}
             Browse more games....{' '}
           </p>

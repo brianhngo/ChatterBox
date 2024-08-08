@@ -38,21 +38,26 @@ export default function LoginFeature() {
   }, [isModal]);
 
   const checkToken = async () => {
-    let token = localStorage.getItem('token');
-    if (token) {
-      const { data } = await axios.put(
-        'http://localhost:3001/api/profile/authenticate',
-        {
-          token: token,
-        }
-      );
+    try {
+      let token = localStorage.getItem('token');
+      if (token) {
+        const { data } = await axios.put(
+          'http://localhost:3001/api/profile/authenticate',
+          {
+            token: token,
+          }
+        );
 
-      if (data) {
-        // if token exist set token state true
-        setHasToken(true);
-      } else {
-        return;
+        if (data) {
+          // if token exist set token state true
+          console.log(data);
+          setHasToken(true);
+        } else {
+          return;
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 

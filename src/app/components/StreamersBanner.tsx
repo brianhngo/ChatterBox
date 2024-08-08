@@ -95,12 +95,12 @@ export default function StreamersBanner() {
 
   return (
     <section className="py-24 w-full">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="pb-16">
-          <h2 className="w-full text-left text-gray-900 text-4xl font-bold font-manrope leading-loose pb-2.5">
+          <h2 className="w-full text-left text-gray-900 text-5xl font-bold font-manrope leading-loose pb-2.5">
             Browse through List of Live Streamers
           </h2>
-          <p className="w-full text-left text-gray-600 text-lg font-normal leading-8">
+          <p className="w-full text-left text-gray-600 text-xl font-normal leading-8">
             Explore new streamers today!
           </p>
         </div>
@@ -130,8 +130,9 @@ export default function StreamersBanner() {
             {currentItems.map((post) => (
               <div
                 key={post.id}
-                className=" cursor-pointer rounded-md border border-neutral-400 shadow-sm dark:border-neutral-700 swiper-slide max-w-[319px] max-h-450px] cursor-pointer grid">
+                className=" cursor-pointer hover:bg-slate-300 rounded-md border border-neutral-400 shadow-sm dark:border-neutral-700 swiper-slide w-full max-w-[360px]  transition-transform transform hover:scale-105 hover:shadow-lg  grid">
                 <img
+                  className="hover:bg-slate-300"
                   src={post.pic}
                   alt={post.alt}
                   width={400}
@@ -158,7 +159,7 @@ export default function StreamersBanner() {
                           fill="#080341"
                         />
                       </svg>
-                      <span className="ml-2">{post.viewing}</span>
+                      <span className="ml-2 text-lg">{post.viewing}</span>
                     </p>
                   </div>
                   <dt className="mt-6">
@@ -173,7 +174,7 @@ export default function StreamersBanner() {
                   </dt>
 
                   <dd className="mt-4 flex flex-auto flex-col text-base leading-7">
-                    <p className="flex-auto text-base text-neutral-500 dark:text-neutral-500 mb-4">
+                    <p className="flex-auto text-lg  text-neutral-500 dark:text-neutral-500 mb-4">
                       {post.description}
                     </p>
 
@@ -210,7 +211,7 @@ export default function StreamersBanner() {
               />
             </svg>
           </button>
-          <p className="text-right text-blue-600 hover:cursor-pointer hover:underline text-lg">
+          <p className="text-right text-blue-600 hover:cursor-pointer hover:underline text-xl">
             {' '}
             Browse more streamers....{' '}
           </p>

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 async function authenticateToken(req, res, next) {
   const { token } = req.body;
-
+  console.log(token);
   try {
     // checks if token exist
 
@@ -21,8 +21,8 @@ async function authenticateToken(req, res, next) {
     }
   } catch (error) {
     // fake token !! HACKER!!
-    console.log('token error');
-    return res.status(401).json(false);
+    console.log('token error', error);
+    return res.status(200).json(false);
   }
 }
 
