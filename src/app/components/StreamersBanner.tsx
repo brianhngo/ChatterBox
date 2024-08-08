@@ -7,7 +7,8 @@ const posts = [
     game: 'FIFA',
     pic: '/dota2.png',
     streamName: 'KevinNguyyeen',
-    description: 'Another Day of grind for FIFA26',
+    description:
+      'Another Day of grind for FIFA26 for the fam mmmmmmmmmmmmmmm So lets getttitititititit',
     viewing: '1.2k',
     imgSrc: '/profile.jpg',
     alt: 'Image',
@@ -17,7 +18,7 @@ const posts = [
     game: 'FIFA',
     pic: '/dota2.png',
     streamName: 'KevinNguyyeen',
-    description: 'Another Day of grind for FIFA26',
+    description: 'Another Day of grind for FIFA26 for the fam mmmmmmmmmmmmmmm',
     viewing: '1.2k',
     imgSrc: '/profile.jpg',
     alt: 'Image',
@@ -27,7 +28,7 @@ const posts = [
     game: 'FIFA',
     pic: '/dota2.png',
     streamName: 'KevinNguyyeen',
-    description: 'Another Day of grind for FIFA26',
+    description: 'Another Day of grind for FIFA26 for the fam mmmmmmmmmmmmmmm',
     viewing: '1.2k',
     imgSrc: '/profile.jpg',
     alt: 'Image',
@@ -174,7 +175,7 @@ export default function StreamersBanner() {
                   </dt>
 
                   <dd className="mt-4 flex flex-auto flex-col text-base leading-7">
-                    <p className="flex-auto text-lg  text-neutral-500 dark:text-neutral-500 mb-4">
+                    <p className="flex-auto text-lg  text-neutral-500 dark:text-neutral-500 mb-4 overflow-hidden line-clamp-2">
                       {post.description}
                     </p>
 

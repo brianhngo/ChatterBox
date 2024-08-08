@@ -67,12 +67,16 @@ export default function CategoriesBanner() {
             {currentItems.map((item, index) => (
               <div
                 key={index}
-                className="swiper-slide max-w-[319px] cursor-pointer grid hover:bg-slate-300 shadow-sm transition-transform transform hover:scale-105 hover:shadow-lg">
+                className="swiper-slide max-w-[319px] cursor-pointer grid hover:bg-slate-300  transition-transform transform hover:scale-105 hover:shadow-lg">
                 <img
                   className="grow shrink basis-0 w-[285px] h-[380px] rounded-xl"
                   src={item.src}
                   alt={item.alt}
                 />
+                <p className="text-center text-lg text-black mt-3">
+                  {' '}
+                  {item.alt}
+                </p>
               </div>
             ))}
           </div>

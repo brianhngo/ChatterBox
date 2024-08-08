@@ -1,53 +1,88 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import BrowseGames from './BrowseGames';
 
 export default function StreamsList() {
   const router = useRouter();
 
-  // Click handler function
-  const handleClick = (username: string) => {
-    console.log(`Navigating to /Streams/${username}`);
-    // Navigate to /streams/:id when div box is clicked
-    router.push(`/Streams/${username}`);
-  };
+  const [isChecked, setIsChecked] = useState(false);
 
-  const channels = [
-    { id: 1, username: 'Channel One', followers: 10 },
-    { id: 2, username: 'Channel Two', followers: 20 },
-    { id: 3, username: 'Channel Three', followers: 30 },
-    { id: 4, username: 'Channel Four', followers: 40 },
-  ];
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-white">
-      <h1 className="text-center mt-5 text-2xl text-blue-600 bold underline mb-5">
-        {' '}
-        List of Active Streamers{' '}
-      </h1>
-      <div className="flex flex-row  gap-5 min-h-screen w-screen p-5 bg-white">
-        {channels.map((channel, id) => (
-          <div
-            key={channel.id}
-            className="flex flex-col w-[calc(25%-20px)] border h-[20%] border-gray-300 p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-100 "
-            onClick={() => handleClick(channel.username)}>
-            {/* Video Placeholder */}
-            <div className="w-full h-[200px] bg-gray-200 flex items-center justify-center rounded-lg mb-4">
-              <p className="text-xl text-gray-700">Video </p>
-            </div>
-
-            {/* Channel Information */}
-            <div className="flex flex-col items-center">
-              <h2 className="text-lg font-bold text-gray-800">
-                {channel.username}
-              </h2>
-              <p className="text-lg text-gray-600">
-                {channel.followers} followers
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <label className="themeSwitcherTwo w-[20%]  mt-5 mb-5 mx-auto shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-md  p-1">
+        <input
+          type="checkbox"
+          className="sr-only w-full"
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+        />
+        <span
+          className={`flex flex-grow items-center space-x-[3px] rounded py-2 px-[18px] text-lg font-medium ${
+            !isChecked ? 'text-primary bg-gray-700' : 'text-gray-700'
+          }`}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18px"
+            height="18px"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="mr-2">
+            <path
+              d="M7.99999 8.5C7.99999 7.94772 7.55227 7.5 6.99999 7.5C6.4477 7.5 5.99999 7.94772 5.99999 8.5V9H5.49999C4.9477 9 4.49999 9.44771 4.49999 10C4.49999 10.5523 4.9477 11 5.49999 11H5.99999V11.5C5.99999 12.0523 6.4477 12.5 6.99999 12.5C7.55227 12.5 7.99999 12.0523 7.99999 11.5V11H8.49999C9.05227 11 9.49999 10.5523 9.49999 10C9.49999 9.44771 9.05227 9 8.49999 9H7.99999V8.5Z"
+              fill="#0F1729"
+            />
+            <path
+              d="M18 8C18 8.55229 17.5523 9 17 9C16.4477 9 16 8.55229 16 8C16 7.44772 16.4477 7 17 7C17.5523 7 18 7.44772 18 8Z"
+              fill="#0F1729"
+            />
+            <path
+              d="M17 13C17.5523 13 18 12.5523 18 12C18 11.4477 17.5523 11 17 11C16.4477 11 16 11.4477 16 12C16 12.5523 16.4477 13 17 13Z"
+              fill="#0F1729"
+            />
+            <path
+              d="M16 10C16 10.5523 15.5523 11 15 11C14.4477 11 14 10.5523 14 10C14 9.44771 14.4477 9 15 9C15.5523 9 16 9.44771 16 10Z"
+              fill="#0F1729"
+            />
+            <path
+              d="M19 11C19.5523 11 20 10.5523 20 10C20 9.44771 19.5523 9 19 9C18.4477 9 18 9.44771 18 10C18 10.5523 18.4477 11 19 11Z"
+              fill="#0F1729"
+            />
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M12 3C10.1879 3 7.96237 3.25817 6.21782 3.5093C3.94305 3.83676 2.09096 5.51696 1.60993 7.7883C1.34074 9.05935 1.07694 10.5622 1.01649 11.8204C0.973146 12.7225 0.877981 13.9831 0.777155 15.1923C0.672256 16.4504 1.09148 17.7464 1.86079 18.6681C2.64583 19.6087 3.88915 20.2427 5.32365 19.8413C6.24214 19.5842 6.97608 18.9387 7.5205 18.3026C8.07701 17.6525 8.51992 16.9124 8.83535 16.3103C9.07821 15.8467 9.50933 15.5855 9.91539 15.5855H14.0846C14.4906 15.5855 14.9218 15.8467 15.1646 16.3103C15.4801 16.9124 15.923 17.6525 16.4795 18.3026C17.0239 18.9387 17.7578 19.5842 18.6763 19.8413C20.1108 20.2427 21.3541 19.6087 22.1392 18.6681C22.9085 17.7464 23.3277 16.4504 23.2228 15.1923C23.122 13.9831 23.0268 12.7225 22.9835 11.8204C22.923 10.5622 22.6592 9.05935 22.39 7.7883C21.909 5.51696 20.0569 3.83676 17.7821 3.5093C16.0376 3.25817 13.8121 3 12 3ZM6.50279 5.48889C8.22744 5.24063 10.3368 5 12 5C13.6632 5 15.7725 5.24063 17.4972 5.4889C18.965 5.70019 20.1311 6.77489 20.4334 8.20267C20.6967 9.44565 20.9332 10.8223 20.9858 11.9164C21.0309 12.856 21.1287 14.1463 21.2297 15.3585C21.2912 16.0956 21.0342 16.8708 20.6037 17.3866C20.1889 17.8836 19.7089 18.0534 19.2153 17.9153C18.8497 17.8129 18.4327 17.509 17.9989 17.0021C17.5771 16.5094 17.2144 15.9131 16.9362 15.3822C16.4043 14.3667 15.3482 13.5855 14.0846 13.5855H9.91539C8.65178 13.5855 7.59571 14.3667 7.06374 15.3822C6.78558 15.9131 6.42285 16.5094 6.00109 17.0021C5.56723 17.509 5.15027 17.8129 4.78463 17.9153C4.29109 18.0534 3.81102 17.8836 3.39625 17.3866C2.96576 16.8708 2.70878 16.0956 2.77024 15.3585C2.87131 14.1463 2.96904 12.856 3.01418 11.9164C3.06675 10.8223 3.30329 9.44565 3.56653 8.20267C3.86891 6.77489 5.03497 5.70019 6.50279 5.48889Z"
+              fill="#0F1729"
+            />
+          </svg>
+          Games
+        </span>
+        <span
+          className={`flex items-center flex-grow space-x-[3px] rounded py-2 px-[18px] text-lg  font-medium ${
+            isChecked ? 'text-primary bg-gray-700' : 'text-gray-700'
+          }`}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18px"
+            height="18px"
+            className="mr-2"
+            viewBox="0 0 24 24"
+            fill={isChecked ? 'black' : 'white'}>
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M3 18C3 15.3945 4.66081 13.1768 6.98156 12.348C7.61232 12.1227 8.29183 12 9 12C9.70817 12 10.3877 12.1227 11.0184 12.348C11.3611 12.4703 11.6893 12.623 12 12.8027C12.3107 12.623 12.6389 12.4703 12.9816 12.348C13.6123 12.1227 14.2918 12 15 12C15.7082 12 16.3877 12.1227 17.0184 12.348C19.3392 13.1768 21 15.3945 21 18V21H15.75V19.5H19.5V18C19.5 15.5147 17.4853 13.5 15 13.5C14.4029 13.5 13.833 13.6163 13.3116 13.8275C14.3568 14.9073 15 16.3785 15 18V21H3V18ZM9 11.25C8.31104 11.25 7.66548 11.0642 7.11068 10.74C5.9977 10.0896 5.25 8.88211 5.25 7.5C5.25 5.42893 6.92893 3.75 9 3.75C10.2267 3.75 11.3158 4.33901 12 5.24963C12.6842 4.33901 13.7733 3.75 15 3.75C17.0711 3.75 18.75 5.42893 18.75 7.5C18.75 8.88211 18.0023 10.0896 16.8893 10.74C16.3345 11.0642 15.689 11.25 15 11.25C14.311 11.25 13.6655 11.0642 13.1107 10.74C12.6776 10.4869 12.2999 10.1495 12 9.75036C11.7001 10.1496 11.3224 10.4869 10.8893 10.74C10.3345 11.0642 9.68896 11.25 9 11.25ZM13.5 18V19.5H4.5V18C4.5 15.5147 6.51472 13.5 9 13.5C11.4853 13.5 13.5 15.5147 13.5 18ZM11.25 7.5C11.25 8.74264 10.2426 9.75 9 9.75C7.75736 9.75 6.75 8.74264 6.75 7.5C6.75 6.25736 7.75736 5.25 9 5.25C10.2426 5.25 11.25 6.25736 11.25 7.5ZM15 5.25C13.7574 5.25 12.75 6.25736 12.75 7.5C12.75 8.74264 13.7574 9.75 15 9.75C16.2426 9.75 17.25 8.74264 17.25 7.5C17.25 6.25736 16.2426 5.25 15 5.25Z"
+              fill="#080341"
+            />
+          </svg>
+          Streamer
+        </span>
+      </label>
+      <BrowseGames />
     </div>
   );
 }
