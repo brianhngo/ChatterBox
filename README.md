@@ -2,7 +2,8 @@
 
 <p><strong>Overview</strong></p>
 
-<p>I successfully completed the frontend assignment and finished all backend tasks. The only part pending is setting up WebSocket, which prevented completion of related routes.</p>
+<p>I successfully completed the a Twitch clone app, with built in Real time Chat system, utilizing websockets for chat functionality. This allows the admin, user, and superadmin to have the ability based upon their status for chat room.
+For this application I utilized Next.js/React, Supabase , Google Firebase, Node.js, Express , Google authentication. Theres a push notification where followers are sent an email when the streamer is online.
 
 <p><strong>Dependencies Used</strong></p>
 
@@ -54,10 +55,10 @@
 <img src="./public/images/2FAModal.png" alt="2FAModal" />
 
 <p><strong>ChangeInfo.png</strong></p>
-<img src="./public/images/ChangeInfo.png" alt="ChangeInfo" />
+<img src="./public/images/Profile.png" alt="ChangeInfo" />
 
 <p><strong>ChangePw.png</strong></p>
-<img src="./public/images/ChangePw.png" alt="ChangePw" />
+<img src="./public/ChangePw.png" alt="ChangePw" />
 
 <p><strong>ChannelPage.png</strong></p>
 <img src="./public/images/ChannelPage.png" alt="ChannelPage" />
@@ -74,11 +75,14 @@
 <p><strong>CreateUser.gif</strong></p>
 <img src="./public/images/CreateUser.gif" alt="CreateUser" />
 
-<p><strong>Homepage.gif</strong></p>
-<img src="./public/images/Homepage.gif" alt="Homepage" />
+<p><strong>Landing Page 1</strong></p>
+<img src="./public/LandingPage1.png" alt="Homepage1" />
 
 <p><strong>Homepage.png</strong></p>
-<img src="./public/images/Homepage.png" alt="Homepage" />
+<img src="./public/LandingPage2.png" alt="Homepage2" />
+
+<p><strong>Homepage.png</strong></p>
+<img src="./public/LandingPage3.png" alt="Homepage3" />
 
 <p><strong>Login2FA.gif</strong></p>
 <img src="./public/images/Login2FA.gif" alt="Login2FA" />
@@ -94,4 +98,3 @@
 
 <p><strong>ProfileChannel.gif</strong></p>
 <img src="./public/images/ProfileChannel.gif" alt="ProfileChannel" />
-
