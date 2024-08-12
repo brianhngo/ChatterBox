@@ -55,7 +55,7 @@ For this application I utilized Next.js/React, Supabase , Google Firebase, Node.
 <img src="./public/images/2FAModal.png" alt="2FAModal" />
 
 <p><strong>ChangeInfo.png</strong></p>
-<img src="./public/images/Profile.png" alt="ChangeInfo" />
+<img src="./public/Profile.png" alt="ChangeInfo" />
 
 <p><strong>ChangePw.png</strong></p>
 <img src="./public/ChangePw.png" alt="ChangePw" />
