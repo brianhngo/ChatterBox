@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-
+import { useRouter } from 'next/navigation';
 const games = [
   {
     id: 1,
@@ -66,7 +67,16 @@ const games = [
   },
 ];
 
-export default function BrowseGames() {
+export default function BrowseGames({ setIsChecked, setSelectedGame }) {
+  const router = useRouter();
+
+  const handlePostClick = (event: any, value: string) => {
+    event.preventDefault();
+
+    setSelectedGame(value);
+    setIsChecked(true);
+  };
+
   return (
     <>
       <h1 className="text-6xl underline text-black text-center mt-5 mb-5">
@@ -101,9 +111,9 @@ export default function BrowseGames() {
       <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-5 gap-6 p-10">
         {games.map((game) => (
           <a
+            onClick={() => handlePostClick(event, game.name)}
             key={game.id}
-            href="#"
-            className="flex flex-col bg-white border shadow-md rounded-xl hover:shadow-lg focus:outline-none focus:shadow-lg transition">
+            className="flex flex-col bg-white border shadow-md rounded-xl hover:shadow-lg  cursor-pointer selection:focus:outline-none focus:shadow-lg transition transition-transform transform hover:scale-105 hover:shadow-lg">
             <img
               className="w-full h-[320px] rounded-t-xl"
               src={game.image}

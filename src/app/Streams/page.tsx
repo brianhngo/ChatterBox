@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BrowseGames from './BrowseGames';
+import BrowseStreamers from './BrowseStreamers';
 
 export default function StreamsList() {
   const router = useRouter();
 
   const [isChecked, setIsChecked] = useState(false);
-
+  const [selectedGame, setSelectedGame] = useState('');
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
@@ -82,7 +83,17 @@ export default function StreamsList() {
           Streamer
         </span>
       </label>
-      <BrowseGames />
+      {isChecked === false ? (
+        <BrowseGames
+          setIsChecked={setIsChecked}
+          setSelectedGame={setSelectedGame}
+        />
+      ) : (
+        <BrowseStreamers
+          selectedGame={selectedGame}
+          setSelectedGame={setSelectedGame}
+        />
+      )}
     </div>
   );
 }
