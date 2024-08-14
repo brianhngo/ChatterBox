@@ -102,30 +102,42 @@ const validateToken = async (token, room) => {
       throw new Error('Error fetching user data');
     }
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
 
 const userSocketMap = new Map();
+const roomViewersMap = new Map();
 
 io.on('connection', (socket) => {
   // Connection
   socket.on('join_room', async ({ room, token }) => {
-    const decoded = await validateToken(token, room);
-    if (decoded) {
-      // token
-      userSocketMap.set(decoded.username, socket.id);
+    try {
+      console.log('hi');
+      const decoded = await validateToken(token, room);
+
+      if (decoded) {
+        // Map the username to socket ID
+        userSocketMap.set(decoded.username, socket.id);
+      }
+
+      // Initialize room viewer count if not set
+      if (!roomViewersMap.has(room)) {
+        roomViewersMap.set(room, []);
+      }
+
+      // Add socket.id to the list of viewers in the room
 
       socket.join(room);
-      console.log(`${socket.id} joined room: ${room}`);
+
+      if (!roomViewersMap.get(room).includes(socket.id)) {
+        !roomViewersMap.get(room).push(socket.id);
+      }
+
+      io.to(room).emit('viewerCountUpdate', roomViewersMap.get(room).length);
+    } catch (error) {
+      console.error('Error validating token or joining room:', error);
     }
-    // else if (decoded === 'banned' || decoded === false) {
-    //   // failed token
-    //   console.log('failed Token');
-    //   socket.join(room);
-    //   console.log(`${socket.id} joined room: ${room}`);
-    // }
   });
 
   socket.on('send_message', async (data) => {
@@ -276,17 +288,61 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave_room', (room) => {
+    console.log('User requested to leave room:', room);
+
+    // Remove the user from the room
     socket.leave(room);
-    for (const [username, socketId] of userSocketMap.entries()) {
-      if (socketId === socket.id) {
+
+    // Update user's room list
+    const userRoomsList = userRooms.get(socket.id) || [];
+    const index = userRoomsList.indexOf(room);
+    if (index > -1) {
+      userRoomsList.splice(index, 1);
+      userRooms.set(socket.id, userRoomsList);
+    }
+
+    // Decrement the viewer count for the room
+    if (roomViewersMap.has(room)) {
+      const currentCount = roomViewersMap.get(room);
+      if (currentCount > 0) {
+        roomViewersMap.set(room, currentCount - 1);
+        io.to(room).emit('viewerCountUpdate', roomViewersMap.get(room));
+      }
+    }
+
+    console.log(`User left room: ${room}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+
+    // Find the room associated with this socket
+    let userRoom = null;
+
+    for (const [room, viewers] of roomViewersMap.entries()) {
+      if (viewers.includes(socket.id)) {
+        userRoom = room;
+        viewers.splice(viewers.indexOf(socket.id), 1); // Remove the socket ID from the array
+        break;
+      }
+    }
+
+    if (userRoom) {
+      // Emit the updated viewer count
+      io.to(userRoom).emit(
+        'viewerCountUpdate',
+        roomViewersMap.get(userRoom).length
+      );
+    } else {
+      console.warn(`Room not found for disconnected socket: ${socket.id}`);
+    }
+
+    // Remove the user from the userSocketMap
+    for (const [username, id] of userSocketMap.entries()) {
+      if (id === socket.id) {
         userSocketMap.delete(username);
         break;
       }
     }
-    console.log(`User left room:${room}`);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
   });
 });
