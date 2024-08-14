@@ -19,6 +19,8 @@ interface ChannelProps {
   setDescription: () => void;
   description: string;
   isSuspended: boolean;
+  setGame: () => void;
+  game: string;
 }
 
 export default function Channel({
@@ -35,6 +37,8 @@ export default function Channel({
   setTitle,
   description,
   title,
+  setGame,
+  game,
 }: ChannelProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewers, setViewers] = useState(0);
@@ -135,7 +139,7 @@ export default function Channel({
 
   return (
     <div className="flex flex-col w-full h-full items-center justify-center border border-gray-300 p-4">
-      <h1 className="text-2xl text-gray-600 mb-3">
+      <h1 className="text-3xl text-gray-600 mb-3">
         {username}
         <span className="text-2xl text-gray-600"> {title}</span>
         {status === true ? (
@@ -149,8 +153,11 @@ export default function Channel({
       </div>
       <div className="flex w-full flex-row justify-between mx-auto items-center mt-4">
         <section>
-          <h2 className="text-xl text-black font-bold">
+          <h2 className="text-2xl text-black font-bold">
             {username}{' '}
+            <span className="rounded-lg bg-neutral-200 p-1 text-sm uppercase text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+              {game}
+            </span>
             <p className="text-xl font-bold text-black"> {description} </p>
           </h2>
           <p className="text-xl flex flex-row font-bold mt-1 mb-1 text-black">

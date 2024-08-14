@@ -98,6 +98,34 @@ interface Command {
   description: string;
 }
 
+const games = [
+  { name: '/setgame @League of Legends', description: 'League of Legends' },
+  { name: '/setgame @Dota2', description: 'Dota2' },
+  { name: '/setgame @Heartstone', description: 'Heartstone' },
+  { name: '/setgame @World of Warcraft', description: 'World of Warcraft' },
+  { name: '/setgame @Apex Legends', description: 'Apex Legends' },
+  { name: '/setgame @Fortnite', description: 'Fortnite' },
+  { name: '/setgame @Podcasting', description: 'Podcasting' },
+  { name: '/setgame @Overwatch2', description: 'Overwatch2' },
+  { name: '/setgame @Call of Duty', description: 'Call of Duty' },
+  { name: '/setgame @PUBG', description: 'PUBG' },
+];
+
+const games2 = [
+  'League of Legends',
+  'Dota2',
+  'Heartstone',
+  'World of Warcraft',
+  'Apex Legends',
+  'Fortnite',
+  'Podcasting',
+  'Overwatch2',
+  'Call of Duty',
+  'PUBG',
+];
+
+const description = `/setgame @Game - ${games2.join(', ')}`;
+
 const commands: Command[] = [
   {
     name: '/setAdmin',
@@ -138,6 +166,11 @@ const commands: Command[] = [
   {
     name: '/setdescription',
     description: '/setdescription @Text - Update Channel Description',
+  },
+
+  {
+    name: '/setgame',
+    description: description,
   },
 ];
 
@@ -311,6 +344,8 @@ export async function commandSwitchCase(command, information, streamId) {
             text: information,
             token: window.localStorage.getItem('token'),
           });
+        } else {
+          socket.emit('fail_changeTitle');
         }
 
         break;
@@ -329,6 +364,24 @@ export async function commandSwitchCase(command, information, streamId) {
             text: information,
             token: window.localStorage.getItem('token'),
           });
+        } else {
+          socket.emit('fail_changeDescription');
+        }
+        break;
+      case '/setgame':
+        response = await axios.put('http://localhost:3001/api/chat/setgame', {
+          token: window.localStorage.getItem('token'),
+          text: information,
+          streamsId: streamId,
+        });
+        if (response.data) {
+          socket.emit('set_game', {
+            streamsId: streamId,
+            text: information,
+            token: window.localStorage.getItem('token'),
+          });
+        } else {
+          socket.emit('fail_setgame');
         }
         break;
       default:
@@ -379,4 +432,8 @@ for (let command of commands) {
 // Insert emotes into chatTrie
 for (let emote of emotes) {
   chatTrie.insert(emote.name.toLocaleLowerCase(), emote.description);
+}
+
+for (let game of games) {
+  chatTrie.insert(game.name.toLocaleLowerCase(), game.description);
 }

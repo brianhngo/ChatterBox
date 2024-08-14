@@ -26,6 +26,7 @@ export default function StreamsDetails({ params }: Params) {
   const [isBanned, setIsBanned] = useState(false);
   const [isSuspended, setIsSuspended] = useState(false);
   const isFetched = useRef(false);
+  const [game, setGame] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -36,11 +37,12 @@ export default function StreamsDetails({ params }: Params) {
         'http://localhost:3001/api/channel/getUserInformation',
         { username: username }
       );
-
+      console.log(data);
       if (data) {
         setChannelData(data);
         setTitle(data.title);
         setDescription(data.description);
+        setGame(data.game);
       } else {
         console.log('No data received');
       }
@@ -242,12 +244,27 @@ export default function StreamsDetails({ params }: Params) {
       setDescription(message);
     };
 
+    const handleGameChange = (message) => {
+      setGame(message);
+    };
+
+    const handleFail = (message) => {
+      toast.error('Do not have permission');
+    };
+
     socket.on('changeTitle', handleTitleChange);
     socket.on('changeDescription', handleDescriptionChange);
-
+    socket.on('changed_game', handleGameChange);
+    socket.on('failed_setgame2', handleFail);
+    socket.on('failed_changeTitle2', handleFail);
+    socket.on('failed_changeDescription2', handleFail);
     return () => {
       socket.off('changeTitle', handleTitleChange);
       socket.off('changeDescription', handleDescriptionChange);
+      socket.on('changed_game', handleGameChange);
+      socket.off('failed_setgame2', handleFail);
+      socket.on('failed_changeTitle2', handleFail);
+      socket.on('failed_changeDescription2', handleFail);
     };
   }, []);
 
@@ -307,6 +324,8 @@ export default function StreamsDetails({ params }: Params) {
             setTitle={setTitle}
             description={description}
             setDescription={setDescription}
+            game={game}
+            setGame={setGame}
           />
         </div>
         <div className="w-2/5">

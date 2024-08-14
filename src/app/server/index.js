@@ -313,6 +313,23 @@ io.on('connection', (socket) => {
     console.log(`User left room: ${room}`);
   });
 
+  socket.on('set_game', (data) => {
+    const { streamsId, text, token } = data;
+    socket.emit('changed_game', text);
+  });
+
+  socket.on('fail_setgame', () => {
+    socket.emit('failed_setgame2');
+  });
+
+  socket.on('fail_changeTitle', () => {
+    socket.emit('failed_changeTitle2');
+  });
+
+  socket.on('fail_changeDescription', () => {
+    socket.emit('failed_changeDescription2');
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
 

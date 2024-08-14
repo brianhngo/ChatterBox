@@ -413,4 +413,37 @@ router.put(
   }
 );
 
+router.put(
+  '/setgame',
+  authenticateToken,
+  isSuperAdminOrHost,
+  async (req, res) => {
+    try {
+      const { role, decodedUID, streamsId, decoded, selectedUser, text } =
+        req.body;
+
+      if (role === 'superadmin') {
+        const { data: profileData, error: profileError } = await supabase
+          .from('Profile')
+          .select('id')
+          .eq('username', streamsId)
+          .single();
+        // 3 cases where you can mute
+        const { data: channelInfo, error: channelError } = await supabase
+          .from('Channel')
+          .update({
+            Game: text,
+          })
+          .eq('uuid', profileData.id);
+
+        res.status(200).json(true);
+      } else {
+        res.status(200).json(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
+
 module.exports = router;

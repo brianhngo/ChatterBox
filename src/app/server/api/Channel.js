@@ -56,6 +56,7 @@ router.put('/getUserInformation', async (req, res) => {
       title: channelData.Title,
       description: channelData.Description,
       isSuspended: channelData.IsSuspended,
+      game: channelData.Game,
     });
   } catch (error) {
     console.error('Internal Server Error:', error.message);
