@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 const games = [
   {
     id: 1,
@@ -76,6 +77,22 @@ export default function BrowseGames({ setIsChecked, setSelectedGame }) {
     setSelectedGame(value);
     setIsChecked(true);
   };
+
+  const getDataHandler = async () => {
+    try {
+      const { data } = await axios.put('http://localhost:3001/getBrowseData');
+
+      if (data) {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDataHandler();
+  }, []);
 
   return (
     <>

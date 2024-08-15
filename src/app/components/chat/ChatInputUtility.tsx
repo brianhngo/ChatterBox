@@ -371,7 +371,7 @@ export async function commandSwitchCase(command, information, streamId) {
       case '/setgame':
         response = await axios.put('http://localhost:3001/api/chat/setgame', {
           token: window.localStorage.getItem('token'),
-          text: information,
+          text: information.toLowerCase(),
           streamsId: streamId,
         });
         if (response.data) {

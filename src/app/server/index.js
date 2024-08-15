@@ -363,3 +363,68 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+app.put('/getBrowseData', async (req, res) => {
+  try {
+    // Query Supabase to get live channels with their profile data
+    const { data, error } = await supabase
+      .from('Channel')
+      .select(
+        `
+        *,
+        Profile(id, username)
+      `
+      )
+      .eq('Status', true);
+
+    if (error) {
+      throw error;
+    }
+
+    // Define an object to store viewer counts for each game
+    const genreViewerCounts = {
+      'league of legends': 0,
+      dota2: 0,
+      heartstone: 0,
+      'world of warcraft': 0,
+      'apex legends': 0,
+      fortnite: 0,
+      podcasting: 0,
+      overwatch2: 0,
+      'call of duty': 0,
+      pubg: 0,
+    };
+    console.log(data);
+    // Process each channel entry
+    data.forEach((entry) => {
+      const username = entry.Profile.username;
+      const gameGenre = entry.Game; // Adjust based on actual column name
+
+      // Get the viewer count from roomViewersMap
+      const viewers = roomViewersMap.get(username) || [];
+
+      const viewerCount = viewers.length;
+
+      // Add the viewer count to the corresponding game genre
+      if (genreViewerCounts.hasOwnProperty(gameGenre)) {
+        genreViewerCounts[gameGenre] += viewerCount;
+        console.log(
+          username,
+          'username',
+          'hi',
+          genreViewerCounts,
+          viewerCount,
+          'viewerCount',
+          viewers,
+          'viewers'
+        );
+      }
+    });
+
+    // Send the result as the response
+    res.json(genreViewerCounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching data.' });
+  }
+});

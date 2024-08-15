@@ -254,4 +254,37 @@ router.put('/checkStatus', authenticateToken, async (req, res) => {
   }
 });
 
+router.put('/getBrowseData', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('Channel')
+      .select(
+        `
+    *,
+    Profile(id, username)
+  `
+      )
+      .eq('Status', true);
+
+    // Define an object to store viewer counts for each game
+    const genreViewerCounts = {
+      'league of legends': 0,
+      dota2: 0,
+      heartstone: 0,
+      'world of warcraft': 0,
+      'apex legends': 0,
+      fortnite: 0,
+      podcasting: 0,
+      overwatch2: 0,
+      'call of duty': 0,
+      pubg: 0,
+    };
+
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+    console.error(error);
+  }
+});
+
 module.exports = router;

@@ -245,7 +245,7 @@ router.put('/googleLogin', async (req, res) => {
       let index = email.indexOf('@'); // everything before '@' will be a username
       const { data, error: insertError } = await supabase
         .from('Profile')
-        .insert([{ email: email, username: email.slice(0, index + 1) }])
+        .insert([{ email: email, username: email.slice(0, index) }])
         .select('id');
 
       if (insertError) {
