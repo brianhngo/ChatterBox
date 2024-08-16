@@ -1,76 +1,11 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-const games = [
-  {
-    id: 1,
-    name: 'Dota2',
-    image: '/dota2.png',
-    genre: ['Multiplayer', 'MOBA'],
-    viewing: 1200,
-  },
-  {
-    id: 2,
-    name: 'Fortnite',
-    image: '/fortnite.jpeg',
-    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
-    viewing: 1200,
-  },
-  {
-    id: 3,
-    name: 'League of Legends',
-    image: '/LeagueOfLegends.jpg',
-    genre: ['Multiplayer', 'MOBA'],
-    viewing: 1200,
-  },
-  {
-    id: 4,
-    name: 'Heartstone',
-    image: '/heartstone.jpg',
-    genre: ['PvP', 'Strategy'],
-    viewing: 1200,
-  },
-  {
-    id: 5,
-    name: 'Overwatch2',
-    image: '/Overwatch2.webp',
-    genre: ['Arena', 'Multiplayer'],
-    viewing: 1200,
-  },
-  {
-    id: 6,
-    name: 'World of Warcraft',
-    image: '/wow.jpg',
-    genre: ['MMO', 'Multiplayer'],
-    viewing: 1200,
-  },
-  {
-    id: 7,
-    name: 'Call of Duty',
-    image: '/cod.jpg',
-    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
-    viewing: 1200,
-  },
-  {
-    id: 8,
-    name: 'Apex Legends',
-    image: '/apex.jpg',
-    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
-    viewing: 1200,
-  },
-  {
-    id: 8,
-    name: 'Podcasting',
-    image: '/podcasting.png',
-    genre: ['Single', 'Listening'],
-    viewing: 1200,
-  },
-];
 
 export default function BrowseGames({ setIsChecked, setSelectedGame }) {
   const router = useRouter();
-
+  const [games, setGames] = useState([]);
   const handlePostClick = (event: any, value: string) => {
     event.preventDefault();
 
@@ -83,7 +18,7 @@ export default function BrowseGames({ setIsChecked, setSelectedGame }) {
       const { data } = await axios.put('http://localhost:3001/getBrowseData');
 
       if (data) {
-        console.log(data);
+        setGames(data);
       }
     } catch (error) {
       console.log(error);

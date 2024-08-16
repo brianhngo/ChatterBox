@@ -29,6 +29,7 @@ app.use('/api/channel', channelRouter);
 app.use('/api/following', followingRouter);
 app.use('/api/chat', chatRouter);
 const authenticateSocket = require('./api/SocketMiddleware');
+const { default: axios } = require('axios');
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -364,6 +365,72 @@ io.on('connection', (socket) => {
   });
 });
 
+const games = [
+  {
+    id: 1,
+    name: 'Dota2',
+    image: '/dota2.png',
+    genre: ['Multiplayer', 'MOBA'],
+    viewing: 1200,
+  },
+  {
+    id: 2,
+    name: 'Fortnite',
+    image: '/fortnite.jpeg',
+    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
+    viewing: 1200,
+  },
+  {
+    id: 3,
+    name: 'League of Legends',
+    image: '/LeagueOfLegends.jpg',
+    genre: ['Multiplayer', 'MOBA'],
+    viewing: 1200,
+  },
+  {
+    id: 4,
+    name: 'Heartstone',
+    image: '/heartstone.jpg',
+    genre: ['PvP', 'Strategy'],
+    viewing: 1200,
+  },
+  {
+    id: 5,
+    name: 'Overwatch2',
+    image: '/Overwatch2.webp',
+    genre: ['Arena', 'Multiplayer'],
+    viewing: 1200,
+  },
+  {
+    id: 6,
+    name: 'World of Warcraft',
+    image: '/wow.jpg',
+    genre: ['MMO', 'Multiplayer'],
+    viewing: 0,
+  },
+  {
+    id: 7,
+    name: 'Call of Duty',
+    image: '/cod.jpg',
+    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
+    viewing: 0,
+  },
+  {
+    id: 8,
+    name: 'Apex Legends',
+    image: '/apex.jpg',
+    genre: ['Battle Royal', 'FPS', 'Multiplayer'],
+    viewing: 0,
+  },
+  {
+    id: 8,
+    name: 'Podcasting',
+    image: '/podcasting.png',
+    genre: ['Single', 'Listening'],
+    viewing: 0,
+  },
+];
+
 app.put('/getBrowseData', async (req, res) => {
   try {
     // Query Supabase to get live channels with their profile data
@@ -394,7 +461,7 @@ app.put('/getBrowseData', async (req, res) => {
       'call of duty': 0,
       pubg: 0,
     };
-    console.log(data);
+
     // Process each channel entry
     data.forEach((entry) => {
       const username = entry.Profile.username;
@@ -408,21 +475,67 @@ app.put('/getBrowseData', async (req, res) => {
       // Add the viewer count to the corresponding game genre
       if (genreViewerCounts.hasOwnProperty(gameGenre)) {
         genreViewerCounts[gameGenre] += viewerCount;
-        console.log(
-          username,
-          'username',
-          'hi',
-          genreViewerCounts,
-          viewerCount,
-          'viewerCount',
-          viewers,
-          'viewers'
-        );
       }
     });
 
-    // Send the result as the response
-    res.json(genreViewerCounts);
+    // Update the games array with the viewer counts from genreViewerCounts
+    const updatedGames = games.map((game) => {
+      const lowerCaseName = game.name.toLowerCase();
+      if (genreViewerCounts.hasOwnProperty(lowerCaseName)) {
+        return {
+          ...game,
+          viewing: genreViewerCounts[lowerCaseName],
+        };
+      }
+      return game;
+    });
+
+    // Send the updated games array as the response
+    res.json(updatedGames);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while fetching data.' });
+  }
+});
+
+app.put('/getBrowseDataStreamer', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('Channel')
+      .select(
+        `
+        Game,
+        Title,
+        Description,
+        Profile(id, username)
+      `
+      )
+      .eq('Status', true);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data) {
+      // Add the image field based on the game name
+      const updatedData = data.map((channel) => {
+        // Find the corresponding game object
+        const game = games.find(
+          (g) => g.name.toLowerCase() === channel.Game.toLowerCase()
+        );
+
+        // Add the image field to the channel object
+        return {
+          ...channel,
+          image: game ? game.image : null, // Set image to null if no match is found
+        };
+      });
+
+      console.log(updatedData);
+      res.json(updatedData);
+    } else {
+      res.json([]);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while fetching data.' });

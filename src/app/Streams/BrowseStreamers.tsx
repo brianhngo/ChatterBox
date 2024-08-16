@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 const posts = [
@@ -126,7 +126,7 @@ const games = [
 ];
 
 export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
-  console.log(selectedGame);
+  const [streamersData, setStreamersData] = useState([]);
   const [sortOption, setSortOption] = useState('');
   const [sortedPosts, setSortedPosts] = useState(posts);
   const [originalPosts] = useState(posts);
@@ -190,6 +190,24 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
     }
     setSortedPosts(sorted);
   };
+
+  const getDataHandler = async () => {
+    try {
+      const { data } = await axios.put(
+        'http://localhost:3001/getBrowseDataStreamer'
+      );
+
+      if (data) {
+        console.log(data);
+        setStreamersData(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getDataHandler();
+  }, []);
 
   useEffect(() => {
     sortPosts(sortOption);
@@ -280,15 +298,15 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
       </form>
 
       <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-5 gap-6 p-10">
-        {sortedPosts.map((post) => (
+        {streamersData.map((post) => (
           <div
             onClick={() => handlePostClick(post.streamName)}
-            key={post.id}
+            key={post.Profile.username}
             className=" cursor-pointer hover:bg-slate-300 rounded-md border border-neutral-400 shadow-sm dark:border-neutral-700 swiper-slide w-full max-w-[400px]  transition-transform transform hover:scale-105 hover:shadow-lg ">
             <img
               className="hover:bg-slate-300"
-              src={post.pic}
-              alt={post.alt}
+              src={post.image}
+              alt={post.username}
               width={'300px'}
               height={'300px'}
               className="w-full h-[300px]  rounded-t-md"
@@ -296,7 +314,7 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
             <div className="px-3 py-8 lg:px-4 lg:py-10">
               <div className="flex items-center space-x-4">
                 <span className="rounded-lg bg-neutral-200 p-2 text-md font-medium uppercase text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-                  {post.game}
+                  {post.Game}
                 </span>
                 <p className="text-md flex items-center justify-center text-black">
                   <svg
@@ -312,7 +330,7 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
                       fill="#000000"
                     />
                   </svg>
-                  {post.viewing}
+                  1200
                 </p>
               </div>
               <h5 className="text-xl flex items-center justify-center text-center font-medium text-gray-900 dark:text-black">
@@ -321,10 +339,10 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
                   alt="Streamer"
                   className="w-16 h-16 rounded-full mr-2 mt-4 mb-4"
                 />
-                {post.streamName}
+                {post.Title}
               </h5>
               <p className="text-base font-normal text-gray-500 dark:text-gray-400">
-                {post.description}
+                {post.Description}
               </p>
             </div>
           </div>
