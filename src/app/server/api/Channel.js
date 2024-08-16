@@ -41,12 +41,6 @@ router.put('/getUserInformation', async (req, res) => {
       .eq('uuid', profileData.id)
       .single();
 
-    if (channelError) {
-      res.status(200).json({
-        message: 'Channel doesnt exist',
-      });
-    }
-
     res.status(200).json({
       uuid: profileData.id,
       username: profileData.username,

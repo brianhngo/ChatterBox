@@ -126,61 +126,55 @@ const games = [
 ];
 
 export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
+  console.log(selectedGame);
+  const [isLoading, setIsLoading] = useState(true);
   const [streamersData, setStreamersData] = useState([]);
   const [sortOption, setSortOption] = useState('');
-  const [sortedPosts, setSortedPosts] = useState(posts);
-  const [originalPosts] = useState(posts);
+  const [sortedPosts, setSortedPosts] = useState([]);
+  const [originalPosts, setOriginalPosts] = useState([]);
   const [filter, setFilter] = useState(selectedGame);
   const router = useRouter();
+  const [dataFetched, setDataFetched] = useState(false);
 
   const handleGameChange = (event) => {
     const selected = event.target.value;
-
     setSelectedGame(selected);
     filterPosts(selected);
   };
 
   const filterPosts = (game) => {
     if (game) {
-      const filteredPosts = posts.filter(
-        (post) => post.game.toLowerCase() === game.toLowerCase()
+      const filteredPosts = streamersData.filter(
+        (post) => post.Game.toLowerCase() === game.toLowerCase()
       );
+      console.log(filteredPosts, 'filtered data');
       setSortedPosts(filteredPosts);
     } else {
-      setSortedPosts(posts); // Reset to all posts if no game is selected
+      setSortedPosts(streamersData); // Reset to all posts if no game is selected
     }
   };
 
-  const handleGameChange2 = (event) => {
-    const selected = event.target.value;
-    setSelectedGame(selected);
-
-    if (selected) {
-      const filteredPosts = posts.filter(
-        (post) => post.game.toLowerCase() === selected.toLowerCase()
-      );
-      setSortedPosts(filteredPosts);
-    } else {
-      setSortedPosts(posts); // Reset to all posts if no game is selected
-    }
-  };
-
-  const handleSortChange = (event: any) => {
+  const handleSortChange = (event) => {
     const value = event.target.value;
     setSortOption(value);
   };
 
-  const sortPosts = (option: string) => {
+  const sortPosts = (option) => {
     let sorted = [...originalPosts];
     switch (option) {
       case 'most-viewers':
+        // Assuming you have a `viewing` field in your data
         sorted.sort((a, b) => b.viewing - a.viewing);
         break;
       case 'a-z':
-        sorted.sort((a, b) => a.streamName.localeCompare(b.streamName));
+        sorted.sort((a, b) =>
+          a.Profile.username.localeCompare(b.Profile.username)
+        );
         break;
       case 'z-a':
-        sorted.sort((a, b) => b.streamName.localeCompare(a.streamName));
+        sorted.sort((a, b) =>
+          b.Profile.username.localeCompare(a.Profile.username)
+        );
         break;
       case '':
         sorted = [...originalPosts]; // Reset to original
@@ -198,30 +192,43 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
       );
 
       if (data) {
-        console.log(data);
         setStreamersData(data);
+        setOriginalPosts(data);
+        setSortedPosts(data);
+        setDataFetched(true); // Mark data as fetched
       }
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
-    getDataHandler();
+    getDataHandler().finally(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (dataFetched) {
+      // Only run when data has been fetched
+      filterPosts(selectedGame);
+      setFilter(selectedGame);
+    }
+  }, [dataFetched, selectedGame]); // Depend on dataFetched and selectedGame
 
   useEffect(() => {
     sortPosts(sortOption);
   }, [sortOption]);
 
-  useEffect(() => {
-    filterPosts(selectedGame);
-    setFilter(selectedGame);
-  }, [selectedGame]);
-
-  const handlePostClick = (streamName: any) => {
-    // Navigate to the stream page
+  const handlePostClick = (streamName) => {
     router.push(`/Streams/${streamName}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center text-center mx-auto items-center min-h-screen">
+        <div className="loader">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -298,7 +305,7 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
       </form>
 
       <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-5 gap-6 p-10">
-        {streamersData.map((post) => (
+        {sortedPosts.map((post) => (
           <div
             onClick={() => handlePostClick(post.streamName)}
             key={post.Profile.username}
@@ -330,13 +337,13 @@ export default function BrowseStreamers({ selectedGame, setSelectedGame }) {
                       fill="#000000"
                     />
                   </svg>
-                  1200
+                  {post.viewing}
                 </p>
               </div>
               <h5 className="text-xl flex items-center justify-center text-center font-medium text-gray-900 dark:text-black">
                 <img
                   src="/profile.jpg"
-                  alt="Streamer"
+                  alt="/profile.jpg"
                   className="w-16 h-16 rounded-full mr-2 mt-4 mb-4"
                 />
                 {post.Title}

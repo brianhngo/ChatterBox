@@ -517,17 +517,26 @@ app.put('/getBrowseDataStreamer', async (req, res) => {
     }
 
     if (data) {
-      // Add the image field based on the game name
+      // Add the image field based on the game name and viewer count based on username
       const updatedData = data.map((channel) => {
         // Find the corresponding game object
         const game = games.find(
           (g) => g.name.toLowerCase() === channel.Game.toLowerCase()
         );
 
-        // Add the image field to the channel object
+        // Get the username
+        const username = channel.Profile.username;
+
+        // Get the number of viewers for the username
+        const viewing = roomViewersMap.has(username)
+          ? roomViewersMap.get(username).length
+          : 0;
+
+        // Return the updated channel object with the image and viewing fields
         return {
           ...channel,
           image: game ? game.image : null, // Set image to null if no match is found
+          viewing: viewing, // Add the viewing count
         };
       });
 

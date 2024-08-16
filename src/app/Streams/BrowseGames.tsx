@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 export default function BrowseGames({ setIsChecked, setSelectedGame }) {
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [games, setGames] = useState([]);
   const handlePostClick = (event: any, value: string) => {
@@ -26,8 +27,17 @@ export default function BrowseGames({ setIsChecked, setSelectedGame }) {
   };
 
   useEffect(() => {
+    setIsLoading(false);
     getDataHandler();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center text-center mx-auto items-center min-h-screen">
+        <div className="loader">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>
